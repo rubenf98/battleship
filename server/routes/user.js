@@ -18,14 +18,23 @@ router.post("/login", async (req, res) => {
     let user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(400).send("User not found.");
 
+    //await user.updatePoints(req.body.game, user);
+    //await user.updateLeague(user);
+
     bcrypt.compare(req.body.password, user.password, function (err, response) {
         if (err) throw err;
         if (response) {
             const token = user.generateAuthToken();
+
+
+
             res.header("x-auth-token", token).send({
                 _id: user._id,
                 name: user.name,
-                email: user.email
+                email: user.email,
+                points: user.points,
+                league: user.league,
+                counter: user.counter
             });
         } else {
             return res.status(400).send("Data does not match!");
@@ -56,7 +65,10 @@ router.post("/register", async (req, res) => {
     res.send({
         _id: user._id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        points: user.points,
+        league: user.league,
+        counter: user.counter
     });
 });
 
