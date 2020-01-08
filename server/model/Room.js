@@ -10,10 +10,23 @@ const Schema = new mongoose.Schema({
         type: String,
         required: false,
     },
+    winner: {
+        type: String,
+        required: false,
+    },
+    loser: {
+        type: String,
+        required: false,
+    },
     type: {
         type: String,
         enum: ['public', 'private'],
         required: true,
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'running', 'finished'],
+        default: 'pending',
     },
 });
 
