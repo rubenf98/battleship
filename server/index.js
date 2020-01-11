@@ -2,16 +2,17 @@ var express = require("express");
 var bodyParser = require("body-parser");
 const config = require("config");
 const mongoose = require("mongoose");
-var cors = require("cors");
-var server = require("http").Server(express);
-var io = require("socket.io")(app);
+const cors = require("cors");
+const app = express();
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
 
 const usersRoute = require("./routes/user");
 const roomsRoute = require("./routes/room");
 const ranksRoute = require("./routes/rank");
 
 var urlParser = bodyParser.urlencoded({ extended: false });
-var app = express();
+
 var port = 8000;
 
 app.use(cors());
@@ -41,12 +42,11 @@ app.get("/", function(req, res) {
   res.end("Hello");
 });
 
-io.on("connection", function(socket) {
-  socket.emit("news", { hello: "world" });
-  socket.on("my other event", function(data) {
-    console.log(data);
-  });
+app.listen(port, () => console.log(`Listening on port ${port}...`));
+http.listen(3000, () => {
+  console.log(`Listening on port 3000...`);
 });
 
-app.listen(port, () => console.log(`Listening on port ${port}...`));
-server.listen(80);
+io.on("connection", (socket) => {
+  console.log("Someone connected");
+});

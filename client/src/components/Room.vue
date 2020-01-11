@@ -1,14 +1,5 @@
 <template>
-  <div class="page-container">
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-  var socket = io.connect("http://localhost");
-  socket.on("news", function(data) {
-    console.log(data);
-    socket.emit("my other event", { my: "data" });
-  });
-    </script>
-  </div>
+  <div class="page-container"></div>
 </template>
 
 <script>
@@ -24,6 +15,9 @@ export default {
       email: "",
       password: ""
     };
+  },
+  created: function() {
+    var socket = io("http://localhost:3000");
   },
   methods: {}
 };
