@@ -22,3 +22,16 @@
 </body>
 
 </html>
+
+let gold = User.find({ league: "gold" }).sort('points');
+    let silver = User.find({ league: "silver" }).sort('points');
+    let bronze = User.find({ league: "bronze" }).sort('points');
+    let unranked = User.find({ league: "unranked" }).sort('points');
+
+
+
+    ranks.push(gold);
+    ranks.push(silver);
+    ranks.push(bronze);
+    ranks.push(unranked);
+    res.send(ranks);

@@ -2,6 +2,8 @@ const config = require('config');
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 const mongoose = require('mongoose');
+const { Room } = require('../model/Room');
+const { ranks } = require("../helper");
 
 const Schema = new mongoose.Schema({
     name: {
@@ -33,7 +35,7 @@ const Schema = new mongoose.Schema({
     },
     league: {
         type: String,
-        enum: ['unranked', 'bronze', 'silver', 'gold', 'diamond'],
+        enum: ranks,
         default: 'unranked',
     }
 });
@@ -60,13 +62,15 @@ Schema.methods.updatePoints = function (result, user) {
 
         else if (result == "defeat") {
 
-            //Only users that are on a league for more than 2 games can lose points
-            if (user.counter > 2) {
-
+            //Only users that are on a league for more than 2 games 
+            //and have not won yet can get negative points
+            if (user.counter > 2 && user.points != 0) {
+                user.points = 0;
+            }
+            else {
                 //Bronze players can't have negative points
-                if (user.league == "bronze") user.points = 0;
+                if (user.league == "bronze" && user.points < 2) user.points = 0;
                 else user.points -= 2;
-
             }
         }
 
@@ -82,30 +86,26 @@ Schema.methods.updatePoints = function (result, user) {
 
 Schema.methods.updateLeague = function (user) {
     if (user.league != "unranked") {
-
         if (user.points > 20) {
             user.resetCounter(user);
+            if (user.league != "diamond") user.updatePoints("reset", user);
             switch (user.league) {
                 case "bronze":
                     user.league = "silver";
-                    user.updatePoints("reset", user);
                     break;
                 case "silver":
                     user.league = "gold";
-                    user.updatePoints("reset", user);
                     break;
                 case "gold":
                     user.league = "diamond";
-                    user.updatePoints("reset", user);
                     break;
                 default: user.league = "diamond";
                     break;
             }
         }
-        else if (user.points < 0 && user.counter > 2) {
+        else if (user.points < 0 && user.counter >= 2) {
             user.resetCounter(user);
             user.updatePoints("reset", user);
-            
             switch (user.league) {
                 case "diamond":
                     user.league = "gold";
@@ -120,14 +120,17 @@ Schema.methods.updateLeague = function (user) {
     }
     //A player needs to play 5 games to get a rank 
     else {
-
         if (user.counter >= 5) {
             //Check wins and update league if needed
-            user.league = "bronze";
-            user.resetCounter(user);
+            Room.countDocuments({ winner: user._id }, function (err, count) {
+                if (count < 2) user.league = "bronze";
+                else if (count < 4) user.league = "silver";
+                else user.league = "gold";
+
+                user.resetCounter(user);
+            });
         }
     }
-
     user.save();
     return true;
 }

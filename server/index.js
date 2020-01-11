@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 
 const usersRoute = require("./routes/user");
 const roomsRoute = require("./routes/room");
+const ranksRoute = require("./routes/rank");
 
 var urlParser = bodyParser.urlencoded({ extended: false });
 var app = express();
@@ -13,10 +14,10 @@ var port = 8000;
 app.use(urlParser);
 app.use(express.json());
 
-
 //ROUTES
 app.use("/api", usersRoute);
 app.use("/api", roomsRoute);
+app.use("/api", ranksRoute);
 
 //use config module to get the privatekey, if no private key set, end the application
 if (!config.get("myprivatekey")) {
