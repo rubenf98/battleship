@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/ranking/:league", async (req, res) => {
     if (ranks.includes(req.params.league)) {
-        let players = await User.find({ league: req.params.league }, 'name points league').sort('-points');
+        let players = await User.find({ league: req.params.league }, 'name points league').limit(10).sort('-points');
 
         res.send(players);
     }
@@ -18,7 +18,7 @@ router.get("/ranking", async (req, res) => {
         User.find({ league: ranks[3] }, 'name points league').sort('-points'),
         User.find({ league: ranks[4] }, 'name points league').sort('-points')
     ]).then(([diamond, gold, silver, bronze, unranked]) => {
-        let players = diamond.concat(gold, silver, bronze, unranked);
+        let players = diamond.concat(gold, silver, bronze, unranked).slice(0, 10);
         res.send(players);
     });
 });

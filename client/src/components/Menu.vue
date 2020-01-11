@@ -19,9 +19,9 @@
         <a class="menu-item" href="#">
           <span class="item">game history</span>
         </a>
-        <a class="menu-item" href="#">
+        <router-link class="menu-item" to="/ranks">
           <span class="item">world rank</span>
-        </a>
+        </router-link>
       </div>
     </div>
   </div>
