@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.0"
+   width="562.39722pt"
+   height="743.21112pt"
+   viewBox="0 0 562.39722 743.21112"
+   preserveAspectRatio="xMidYMid meet"
+   id="svg12"
+   sodipodi:docname="738679-2196f3.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <defs
+     id="defs16">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath839">
+      <use
+         x="0"
+         y="0"
+         xlink:href="#g835"
+         id="use841"
+         width="100%"
+         height="100%" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1015"
+     id="namedview14"
+     showgrid="false"
+     inkscape:measure-start="0,0"
+     inkscape:measure-end="0,0"
+     inkscape:snap-bbox="false"
+     inkscape:bbox-paths="false"
+     inkscape:zoom="0.43170732"
+     inkscape:cx="-8.7716717"
+     inkscape:cy="706.13811"
+     inkscape:window-x="0"
+     inkscape:window-y="28"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g10"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata2">
+Created by potrace 1.15, written by Peter Selinger 2001-2017
+<rdf:RDF>
+  <cc:Work
+     rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type
+       rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+    <dc:title></dc:title>
+  </cc:Work>
+</rdf:RDF>
+</metadata>
+  <g
+     transform="matrix(0.1,0,0,-0.1,-581.06597,807.52079)"
+     id="g10"
+     style="fill:#2196f3;stroke:none">
+    <a
+       id="a847">
+      <g
+         transform="translate(104.23729,1650.4237)"
+         id="g827">
+        <g
+           id="g831">
+          <g
+             clip-path="url(#clipPath839)"
+             id="g837">
+            <g
+               id="g835"
+               inkscape:label="Clip">
+              <path
+                 d="m 5716,5163 c -3,-16 26.4224,-354.4224 -9.5776,-679.4224 76.5316,-450.5981 20.3212,-872.8452 15.9914,-867.9741 10.7619,-266.9186 7.3391,-552.9954 2.0503,-3074.65823 1398.865,-12.33833 2722.8684,42.10166 4203.6937,151.30291 150.8302,11.12275 473.1652,52.97562 589.4432,199.357 338.293,516.46062 182.149,709.85672 243.637,1360.20132 6.289,66.5206 58.226,164.0806 86.442,161.6787 L 11083,2420 c 103.96,2.8781 177,4 190,11 81,42 75,157 -10,190 -14,5 -329,9 -769,9 h -744 v 545 545 h 59 c 50,0 62,4 85,26 53,54 30,144 -43,164 -23,6 -348,10 -903,10 h -867 l -5,53 c -3,28 -10,169 -16,312 -14,355 -29,671 -36,783 l -6,92 h -364 c -221,0 -364,-4 -364,-9 0,-6 -25,-225 -55,-488 -30,-263 -59,-521 -65,-573 -5,-52 -13,-112 -16,-132 l -6,-37 -319,-3 c -313,-3 -320,-3 -324,17 -3,19 -56,1184 -55,1233 v 22 h -364 -364 z"
+                 id="path8"
+                 inkscape:connector-curvature="0"
+                 sodipodi:nodetypes="ccccscscsccscccsccscccccssscccccccccc"
+                 style="fill:#1871ff;fill-opacity:1" />
+              <rect
+                 transform="scale(1,-1)"
+                 style="opacity:1;fill:#1871ff;fill-opacity:1;stroke:none;stroke-width:6.84653139;stroke-opacity:1"
+                 id="rect823"
+                 width="61.422375"
+                 height="7432.1113"
+                 x="5712.2842"
+                 y="-6424.7842" />
+            </g>
+          </g>
+        </g>
+      </g>
+    </a>
+  </g>
+</svg>
