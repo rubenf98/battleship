@@ -1,43 +1,50 @@
 <template>
-  <div class="rank-container">
-    <div class="table-container">
-      <h1>Rankings</h1>
-      <hr />
-      <div class="rank-nav">
-        <h3>Global</h3>
+  <div>
+    <Back />
+    <div class="rank-container">
+      <div class="table-container">
+        <h1>Rankings</h1>
+        <hr />
+        <div class="rank-nav">
+          <h3>Global</h3>
 
-        <router-link to="/ranks/unranked">
-          <img src="/icons/right.svg" class="icon" />
-        </router-link>
+          <router-link to="/ranks/unranked">
+            <img src="/icons/right.svg" class="icon" />
+          </router-link>
+        </div>
+
+        <table class="table">
+          <thead>
+            <th>#</th>
+            <th>Name</th>
+            <th>League</th>
+            <th>Points</th>
+          </thead>
+          <tbody>
+            <tr v-for="(player, index) in players" :key="player.id">
+              <td>{{index + 1}}</td>
+              <td>{{player.name}}</td>
+              <td>{{player.league}}</td>
+              <td>{{player.points}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div v-if="!players[0]" class="no-data">No players found...</div>
       </div>
-
-      <table class="table">
-        <thead>
-          <th>#</th>
-          <th>Name</th>
-          <th>League</th>
-          <th>Points</th>
-        </thead>
-        <tbody>
-          <tr v-for="(player, index) in players" :key="player.id">
-            <td>{{index + 1}}</td>
-            <td>{{player.name}}</td>
-            <td>{{player.league}}</td>
-            <td>{{player.points}}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div v-if="!players[0]" class="no-data">No players found...</div>
     </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import Back from "./layout/Back.vue";
 
 export default {
   name: "ranks",
+  components: {
+    Back
+  },
   data() {
     return {
       players: null

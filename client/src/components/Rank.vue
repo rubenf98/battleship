@@ -1,47 +1,55 @@
 <template>
-  <div class="rank-container">
-    <div class="table-container">
-      <h1>Rankings</h1>
-      <hr />
-      <div class="rank-nav">
-        <a v-if="before" :href="before">
-          <img src="/icons/left.svg" class="icon" />
-        </a>
+  <div>
+    <Back />
 
-        <h3>{{rank}}</h3>
+    <div class="rank-container">
+      <div class="table-container">
+        <h1>Rankings</h1>
+        <hr />
+        <div class="rank-nav">
+          <a v-if="before" :href="before">
+            <img src="/icons/left.svg" class="icon" />
+          </a>
 
-        <a v-if="after" :href="after">
-          <img src="/icons/right.svg" class="icon" />
-        </a>
+          <h3>{{rank}}</h3>
+
+          <a v-if="after" :href="after">
+            <img src="/icons/right.svg" class="icon" />
+          </a>
+        </div>
+
+        <table v-if="players[0]" class="table">
+          <thead>
+            <th>#</th>
+            <th>Name</th>
+            <th>League</th>
+            <th>Points</th>
+          </thead>
+          <tbody>
+            <tr v-for="(player, index) in players" :key="player.id">
+              <td>{{index + 1}}</td>
+              <td>{{player.name}}</td>
+              <td>{{player.league}}</td>
+              <td>{{player.points}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div v-if="!players[0]" class="no-data">No players found...</div>
       </div>
-
-      <table v-if="players[0]" class="table">
-        <thead>
-          <th>#</th>
-          <th>Name</th>
-          <th>League</th>
-          <th>Points</th>
-        </thead>
-        <tbody>
-          <tr v-for="(player, index) in players" :key="player.id">
-            <td>{{index + 1}}</td>
-            <td>{{player.name}}</td>
-            <td>{{player.league}}</td>
-            <td>{{player.points}}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div v-if="!players[0]" class="no-data">No players found...</div>
     </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import Back from "./layout/Back.vue";
 
 export default {
   name: "rank",
+  components: {
+    Back
+  },
   data() {
     return {
       players: null,

@@ -1,34 +1,45 @@
 <template>
-  <div class="menu-container">
-    <div class="left-container">
-      <div class="logo-container">
-        <h1 class="title">Total Battleship</h1>
-        <img src="/logo.svg" class="logo" />
-      </div>
+  <div>
+    <Auth />
 
-      <div class="spacer"></div>
+    <div class="menu-container">
+      <div class="left-container">
+        <div class="logo-container">
+          <h1 class="title">Total Battleship</h1>
+          <img src="/logo.svg" class="logo" />
+        </div>
 
-      <div class="menu">
-        <router-link class="menu-item" to="/login">
-          <span class="item">new game</span>
-        </router-link>
+        <div class="spacer"></div>
 
-        <a class="menu-item" href="#">
-          <span class="item">find game</span>
-        </a>
-        <a class="menu-item" href="#">
-          <span class="item">game history</span>
-        </a>
-        <router-link class="menu-item" to="/ranks">
-          <span class="item">world rank</span>
-        </router-link>
+        <div class="menu">
+          <router-link class="menu-item" to="/login">
+            <span class="item">new game</span>
+          </router-link>
+
+          <a class="menu-item" href="#">
+            <span class="item">find game</span>
+          </a>
+          <a class="menu-item" href="#">
+            <span class="item">game history</span>
+          </a>
+          <router-link class="menu-item" to="/ranks">
+            <span class="item">world rank</span>
+          </router-link>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+import Auth from "./layout/Auth.vue";
+
+export default {
+  name: "menu",
+  components: {
+    Auth
+  }
+};
 </script>
 
 <style scoped>
