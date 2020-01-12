@@ -78,8 +78,7 @@
 </style>
 
 <script>
-//import UserServices from "../UserService";
-//import VueSocketio from "vue-socket.io";
+import io from "socket.io-client";
 
 export default {
   name: "Room",
@@ -115,7 +114,13 @@ export default {
       display_boards.style.display = "flex";
       let button = document.getElementById("create-board-btn");
       button.style.display = "none";
-    }
+
+      var socket = io("http://localhost:3000");
+      socket.on("message", data => {
+        console.log(data);
+      });
+    },
+    clickEvent() {}
   }
 };
 </script>

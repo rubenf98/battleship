@@ -16,4 +16,4 @@ const routes = [
   { path: '/ranks/:rank', component: Rank, name: "rank" },
 ];
 
-export default routes;  
+export default routes;

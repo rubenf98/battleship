@@ -14,7 +14,7 @@ var urlParser = bodyParser.urlencoded({ extended: false });
 const app = express();
 var port = 8000;
 const corsOptions = {
-  exposedHeaders: 'x-access-token',
+  exposedHeaders: "x-access-token"
 };
 app.use(cors(corsOptions));
 var server = http.Server(app);
@@ -43,7 +43,7 @@ mongoose
   .then(() => console.log("Connected to MongoDB!"))
   .catch((err) => console.error("Could not connect to MongoDB..."));
 
-app.get("/", function (req, res) {
+app.get("/", function(req, res) {
   res.end("Hello");
 });
 
@@ -55,7 +55,7 @@ server.listen(port, () => {
 // SOCKET IO
 io.sockets.on("connection", (socket) => {
   console.log("user connected");
-  socket.emit("message", "SOcket.io");
+  io.emit("message", "Socket.io");
   io.on("start", () => {
     console.log("Game started");
   });
