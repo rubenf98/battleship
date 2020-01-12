@@ -65,6 +65,7 @@ export default {
   },
   methods: {
     register() {
+      const vm = this;
       axios
         .post("http://localhost:8000/api/register", {
           name: this.register_name,
@@ -72,13 +73,19 @@ export default {
           password: this.register_password
         })
         .then(function(response) {
+          vm.$router.push({
+            name: "login",
+            params: { feedback: "User created!" }
+          });
           console.log(response);
+
           location.reload();
         })
         .catch(function(e) {
-          console.log(e.response.data);
-          this.errors = e.response.data;
-          alert(e.response.data);
+          vm.$router.push({
+            name: "menu",
+            params: { feedback: e.response.data }
+          });
         });
     },
     login() {

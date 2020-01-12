@@ -13,7 +13,7 @@ router.post("/room/random", auth, async (req, res) => {
 
   let room = await Room.findOne({ player2: null, status: "pending", player1: { $ne: id } });
   if (!room) return res.status(404).send("no rooms available");
-  
+
   console.log(user._id);
   room.player2 = user._id;
   await room.save();
@@ -29,7 +29,7 @@ router.post("/room/random", auth, async (req, res) => {
   });
 });
 
-//See my current rooms
+//See my history rooms
 router.get("/room/history", auth, async (req, res) => {
   const user = await User.findById(req.user._id).select("_id");
   if (!user) return res.status(404).send("user not found");
@@ -41,10 +41,12 @@ router.get("/room/history", auth, async (req, res) => {
     },
     "player1 player2 winner",
     function (err, rooms) {
-      if (!err) res.send(rooms);
-      if (!rooms)
-        return res.status(404).send("you have not finished a game yet");
-      res.send(rooms);
+      if (!err) {
+        if (!rooms)
+          return res.status(404).send("you have not finished a game yet");
+        res.send(rooms);
+      }
+
     }
   );
 });
@@ -57,13 +59,15 @@ router.get("/room/private", auth, async (req, res) => {
   Room.find(
     {
       $or: [{ player1: user._id }, { player2: user._id }],
-      $or: [{ status: "running" }, { status: "pending" }]
+      $and: [{ status: "running" }]
     },
     "player1 player2 type status",
     function (err, rooms) {
-      if (!err) res.send(rooms);
-      if (!rooms) return res.status(404).send("you have no current rooms");
-      res.send(rooms);
+      if (!err) {
+        if (!rooms) return res.status(404).send("you have no current rooms");
+        res.send(rooms);
+      }
+
     }
   );
 });

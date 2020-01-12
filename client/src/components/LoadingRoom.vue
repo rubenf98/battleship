@@ -33,7 +33,7 @@ export default {
         setTimeout(function() {
           vm.$router.push({
             name: "menu",
-            params: { feedback: "e.response.data" }
+            params: { feedback: e.response.data }
           });
           console.log(e.response.data);
         }, 5800);

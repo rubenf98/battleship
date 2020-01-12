@@ -50,7 +50,10 @@
           <router-link class="menu-item" to="/room/search">
             <span class="item">find game</span>
           </router-link>
-          <router-link class="menu-item" to="/room">
+          <router-link class="menu-item" to="/room/continue">
+            <span class="item">continue</span>
+          </router-link>
+          <router-link class="menu-item" to="/room/history">
             <span class="item">game history</span>
           </router-link>
           <router-link class="menu-item" to="/ranks">
@@ -65,6 +68,9 @@
             <span class="item">find game</span>
           </router-link>
           <router-link class="menu-item" to="/login">
+            <span class="item">continue</span>
+          </router-link>
+          <router-link class="menu-item" to="/login">
             <span class="item">game history</span>
           </router-link>
           <router-link class="menu-item" to="/ranks">
@@ -73,17 +79,28 @@
         </div>
       </div>
     </div>
+
+    <div v-if="feedback" class="feedback" id="feedback">
+      <h1 class="feedback-message">{{feedback}}</h1>
+    </div>
   </div>
 </template>
 
 <script>
+import JQuery from "jquery";
 import Auth from "./layout/Auth.vue";
+let $ = JQuery;
 
 export default {
   name: "menu",
-  props: ["logged"],
+  props: ["logged", "feedback"],
   components: {
     Auth
+  },
+  mounted() {
+    setTimeout(function() {
+      $("#feedback").fadeOut();
+    }, 5000);
   }
 };
 </script>
@@ -92,6 +109,30 @@ export default {
 
 
 <style scoped>
+.feedback {
+  width: 250px;
+  height: 150px;
+  background-image: linear-gradient(rgba(0, 117, 160, 0.404) rgb(0, 97, 187));
+  color: white;
+  position: absolute;
+  right: 0;
+  bottom: 70px;
+  border-radius: 10px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  padding: 15px;
+  box-shadow: 0 0 10px rgba(119, 119, 119, 0.342);
+  border: none;
+  display: table;
+  animation: entrance 1s ease-out;
+}
+.feedback-message {
+  font-size: 1.5em;
+  text-transform: capitalize;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
 .menu-container {
   display: block;
   height: 100vh;
@@ -164,6 +205,12 @@ export default {
   color: white;
 }
 
-
-
+@keyframes entrance {
+  0% {
+    right: -200px;
+  }
+  100% {
+    right: 0px;
+  }
+}
 </style>

@@ -1,17 +1,21 @@
 <template>
-  <div class="room-container">
-    <div id="room-page-header">
-      <h1>Let the Battle Begin!</h1>
-    </div>
-    <div id="boards">
-      <div class="board" id="board1"></div>
-      <div class="slip-container">
-        <img src="/vs.png" alt />
+  <div>
+    <Back />
+
+    <div class="room-container">
+      <div id="room-page-header">
+        <h1>Let the Battle Begin!</h1>
       </div>
-      <div class="board" id="board2"></div>
-    </div>
-    <div id="button-container">
-      <img id="create-board-btn" v-on:click="createBoards" src="/play-btn.png" alt />
+      <div id="boards">
+        <div class="board" id="board1"></div>
+        <div class="slip-container">
+          <img src="/vs.png" alt />
+        </div>
+        <div class="board" id="board2"></div>
+      </div>
+      <div id="button-container">
+        <img id="create-board-btn" v-on:click="createBoards" src="/play-btn.png" alt />
+      </div>
     </div>
   </div>
 </template>
@@ -19,7 +23,10 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style >
 .room-container {
-  height: 100vh;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
   background-image: url("/room-background.jpg");
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -92,11 +99,15 @@
 <script>
 import io from "socket.io-client";
 var socket = io("http://localhost:3000");
+import Back from "./layout/Back.vue";
 
 export default {
   name: "Room",
   props: {
     msg: String
+  },
+  components: {
+    Back
   },
   data: function() {
     return {

@@ -58,7 +58,7 @@ function defaultBoard(min) {
 
 function validateRoom(room) {
     const schema = {
-        player1: Joi.string().required(),
+        player1: Joi.string(),
         player2: Joi.string(),
         type: Joi.string().valid(["public", "private"]).required()
     };
