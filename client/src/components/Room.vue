@@ -100,7 +100,7 @@
 import io from "socket.io-client";
 var socket = io("http://localhost:3000");
 import Back from "./layout/Back.vue";
-
+var audio = new Audio("/sounds/song.mp3");
 export default {
   name: "Room",
   props: {
@@ -114,6 +114,14 @@ export default {
       email: "",
       password: ""
     };
+  },
+  mounted() {
+    audio.play();
+  },
+  beforeRouteLeave(to, from, next) {
+    audio.pause();
+    audio.currentTime = 0;
+    next();
   },
   methods: {
     createBoards() {

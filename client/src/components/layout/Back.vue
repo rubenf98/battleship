@@ -1,7 +1,7 @@
 <template>
   <div class="back-container">
     <router-link to="/">
-      <img src="/logo.svg" class="logo" />
+      <img src="/icons/back.svg" class="logo" />
     </router-link>
   </div>
 </template>
@@ -13,11 +13,11 @@ export default {};
 <style scoped>
 .back-container {
   position: absolute;
-  top: 5;
-  left: 0;
+  top: 20px;
+  left: 20px;
 }
 
 .logo {
-  width: 100px;
+  width: 50px;
 }
 </style>

@@ -213,4 +213,37 @@ export default {
     right: 0px;
   }
 }
+
+@media only screen and (max-width: 1000px) {
+  .title {
+    font-size: 3.5em;
+  }
+  .menu-item {
+    width: 70%;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .logo {
+    display: none;
+  }
+  .title {
+    font-size: 2.5em;
+  }
+}
+
+@media only screen and (max-width: 450px) {
+  .left-container {
+    padding-left: 0;
+    margin: auto;
+  }
+  .title {
+    font-size: 2.5em;
+    text-align: center;
+  }
+  .menu-item {
+    width: 100%;
+    text-align: center;
+  }
+}
 </style>

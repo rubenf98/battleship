@@ -74,12 +74,10 @@ export default {
         })
         .then(function(response) {
           vm.$router.push({
-            name: "login",
+            name: "menu",
             params: { feedback: "User created!" }
           });
           console.log(response);
-
-          location.reload();
         })
         .catch(function(e) {
           vm.$router.push({
@@ -89,6 +87,7 @@ export default {
         });
     },
     login() {
+      const vm = this;
       axios
         .post("http://localhost:8000/api/login", {
           email: this.login_email,
@@ -99,7 +98,10 @@ export default {
           window.location.href = "/";
         })
         .catch(function(e) {
-          console.log(e);
+          vm.$router.push({
+            name: "menu",
+            params: { feedback: e.response.data }
+          });
         });
     }
   }

@@ -1,4 +1,5 @@
 const auth = require("../middleware/auth");
+const games = require("../middleware/games");
 const { Room, validate } = require("../model/Room");
 const { User } = require("../model/User");
 const express = require("express");
@@ -124,7 +125,7 @@ router.get("/room/:room", auth, async (req, res) => {
 });
 
 //Create new room
-router.post("/room", auth, async (req, res) => {
+router.post("/room", auth, games, async (req, res) => {
   // validate the request body first
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
