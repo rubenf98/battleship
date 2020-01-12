@@ -12,8 +12,8 @@ const routes = [
   { path: "/", component: Menu, name: "menu" },
   { path: "/login", component: Login, name: "login" },
   { path: "/room", component: Room, name: "room" },
-  { path: "/ranks", component: Ranks, name: "ranks" },
-  { path: "/ranks/:rank", component: Rank, name: "rank" }
+  { path: '/ranks', component: Ranks, name: "ranks" },
+  { path: '/ranks/:rank', component: Rank, name: "rank" },
 ];
 
 export default routes;

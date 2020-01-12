@@ -15,13 +15,12 @@
           <router-link class="menu-item" to="/room">
             <span class="item">new game</span>
           </router-link>
-
-          <a class="menu-item" href="#">
+          <router-link class="menu-item" to="/room">
             <span class="item">find game</span>
-          </a>
-          <a class="menu-item" href="#">
+          </router-link>
+          <router-link class="menu-item" to="/room">
             <span class="item">game history</span>
-          </a>
+          </router-link>
           <router-link class="menu-item" to="/ranks">
             <span class="item">world rank</span>
           </router-link>
@@ -30,13 +29,12 @@
           <router-link class="menu-item" to="/login">
             <span class="item">new game</span>
           </router-link>
-
-          <a class="menu-item" to="/login">
+          <router-link class="menu-item" to="/login">
             <span class="item">find game</span>
-          </a>
-          <a class="menu-item" to="/login">
+          </router-link>
+          <router-link class="menu-item" to="/login">
             <span class="item">game history</span>
-          </a>
+          </router-link>
           <router-link class="menu-item" to="/ranks">
             <span class="item">world rank</span>
           </router-link>

@@ -41,7 +41,7 @@ const Schema = new mongoose.Schema({
 });
 
 Schema.methods.generateAuthToken = function () {
-    const token = jwt.sign({ _id: this._id }, config.get('myprivatekey'), { expiresIn: 3600 });
+    const token = jwt.sign({ _id: this._id }, config.get('myprivatekey'));
     return token;
 }
 
