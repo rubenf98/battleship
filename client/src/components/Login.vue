@@ -1,22 +1,21 @@
 <template>
   <div>
     <Back />
+
     <div class="auth-container">
       <div class="login-container card">
         <h1 class="card-title">Login</h1>
         <hr />
-        <form action method="post">
-          <div>
-            <label class="label" for="email">Email</label>
-            <input class="form-input" type="email" id="email" v-model="email" />
-          </div>
-          <div>
-            <label class="label" for="password">Password</label>
-            <input class="form-input" type="password" id="password" v-model="password" />
-          </div>
+        <div>
+          <label class="label" for="email">Email</label>
+          <input class="form-input" type="email" v-model="login_email" />
+        </div>
+        <div>
+          <label class="label" for="password">Password</label>
+          <input class="form-input" type="password" v-model="login_password" />
+        </div>
 
-          <button class="submit-btn" v-on:click="login">LOGIN</button>
-        </form>
+        <button class="submit-btn" v-on:click="login">LOGIN</button>
       </div>
 
       <div class="register-container card">
@@ -24,30 +23,74 @@
         <hr />
         <div>
           <label class="label" for="name">Name</label>
-          <input class="form-input" type="text" id="name" v-model="name" />
+          <input class="form-input" type="text" v-model="register_name" />
         </div>
         <div>
           <label class="label" for="email">Email</label>
-          <input class="form-input" type="email" id="email" v-model="email" />
+          <input class="form-input" type="email" v-model="register_email" />
         </div>
         <div>
           <label class="label" for="password">Password</label>
-          <input class="form-input" type="password" id="password" v-model="password" />
+          <input class="form-input" type="password" v-model="register_password" />
         </div>
-        <button class="submit-btn" v-on:click="login">LOGIN</button>
+        <button class="submit-btn" v-on:click="register">Register</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-//import axios from "axios";
+import axios from "axios";
 import Back from "./layout/Back.vue";
 
 export default {
   name: "Login",
   components: {
     Back
+  },
+  data() {
+    return {
+      register_name: null,
+      register_email: null,
+      register_password: null,
+      login_password: null,
+      login_email: null,
+      errors: null,
+      response: null
+    };
+  },
+  methods: {
+    async register() {
+      axios
+        .post("http://localhost:8000/api/register", {
+          name: this.register_name,
+          email: this.register_email,
+          password: this.register_password
+        })
+        .then(function(response) {
+          console.log(response);
+          location.reload();
+        })
+        .catch(function(e) {
+          console.log(e.response.data);
+          this.errors = e.response.data;
+          alert(e.response.data);
+        });
+    },
+    login() {
+      axios
+        .post("http://localhost:8000/api/login", {
+          email: this.login_email,
+          password: this.login_password
+        })
+        .then(function(res) {
+          localStorage.token = res.data.token;
+          window.location.href = "/";
+        })
+        .catch(function(e) {
+          console.log(e);
+        });
+    }
   }
 };
 </script>
