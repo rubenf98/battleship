@@ -4,7 +4,7 @@ const config = require("config");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const http = require("http");
-const io = require("socket.io")(3000);
+const game = require("./game.js");
 
 const usersRoute = require("./routes/user");
 const roomsRoute = require("./routes/room");
@@ -50,13 +50,4 @@ app.get("/", function(req, res) {
 //app.listen(port, () => console.log(`Listening on port ${port}...`));
 server.listen(port, () => {
   console.log(`Listening on port ${port}`);
-});
-
-// SOCKET IO
-io.sockets.on("connection", (socket) => {
-  console.log("user connected");
-  io.emit("message", "Socket.io");
-  io.on("start", () => {
-    console.log("Game started");
-  });
 });
