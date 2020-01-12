@@ -15,7 +15,9 @@
           <input class="form-input" type="password" v-model="login_password" />
         </div>
 
-        <button class="submit-btn" v-on:click="login">LOGIN</button>
+        <div class="button-container">
+          <img class="submit-btn" v-on:click="login" src="/login-btn.png" alt />
+        </div>
       </div>
 
       <div class="register-container card">
@@ -33,7 +35,9 @@
           <label class="label" for="password">Password</label>
           <input class="form-input" type="password" v-model="register_password" />
         </div>
-        <button class="submit-btn" v-on:click="register">Register</button>
+        <div class="button-container">
+          <img class="submit-btn" v-on:click="login" src="/register-btn.png" alt />
+        </div>
       </div>
     </div>
   </div>
@@ -109,6 +113,24 @@ export default {
   align-items: center;
   flex-wrap: wrap;
 }
+
+.submit-btn {
+  width: 150px;
+  transition: 0.3s ease;
+}
+.submit-btn:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}
+
+.button-container {
+  width: fit-content;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 10%;
+}
+
 .label {
   text-align: center;
   display: block;
@@ -118,17 +140,6 @@ export default {
   color: whitesmoke;
 }
 
-.submit-btn {
-  padding: 10px 30px;
-  display: block;
-  margin: 5% auto;
-  margin-top: 15%;
-  cursor: pointer;
-  border: none;
-  background: rgb(19, 233, 179);
-  color: white;
-  border-radius: 5px;
-}
 .login-container {
 }
 

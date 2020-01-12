@@ -1,7 +1,5 @@
 <template>
   <div class="room-container">
-    <script type="application/javascript" src="http://localhost:3000/socket.io/socket.io.js"></script>
-    <script></script>
     <div id="room-page-header">
       <h1>Let the Battle Begin!</h1>
     </div>
@@ -94,11 +92,6 @@ export default {
       password: ""
     };
   },
-  mounted() {
-    let io = document.createElement("script");
-    io.setAttribute("src", "http://cdn.socket.io/socket.io-1.4.5.js");
-    document.head.appendChild(io);
-  },
   methods: {
     createBoards() {
       let board1 = document.getElementById("board1");
@@ -122,11 +115,6 @@ export default {
       display_boards.style.display = "flex";
       let button = document.getElementById("create-board-btn");
       button.style.display = "none";
-
-      var socket = io("http://localhost:3000");
-      socket.on("message", data => {
-        console.log(data);
-      });
     }
   }
 };
