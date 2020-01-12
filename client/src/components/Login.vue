@@ -36,7 +36,7 @@
           <input class="form-input" type="password" v-model="register_password" />
         </div>
         <div class="button-container">
-          <img class="submit-btn" v-on:click="login" src="/register-btn.png" alt />
+          <img class="submit-btn" v-on:click="register" src="/register-btn.png" alt />
         </div>
       </div>
     </div>
