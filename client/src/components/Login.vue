@@ -1,37 +1,95 @@
 <template>
-  <div class="page-container">
-    <div class="login-container">
-      <label for="email">Email:</label>
-      <input type="email" id="email" v-model="email" />
-      <br />
-      <label for="password">Password</label>
-      <input type="password" id="password" v-model="password" />
-      <br />
-      <button v-on:click="login">LOGIN</button>
+  <div>
+    <Back />
+
+    <div class="auth-container">
+      <div class="login-container card">
+        <h1 class="card-title">Login</h1>
+        <hr />
+        <div>
+          <label class="label" for="email">Email</label>
+          <input class="form-input" type="email" v-model="login_email" />
+        </div>
+        <div>
+          <label class="label" for="password">Password</label>
+          <input class="form-input" type="password" v-model="login_password" />
+        </div>
+
+        <button class="submit-btn" v-on:click="login">LOGIN</button>
+      </div>
+
+      <div class="register-container card">
+        <h1 class="card-title">Register</h1>
+        <hr />
+        <div>
+          <label class="label" for="name">Name</label>
+          <input class="form-input" type="text" v-model="register_name" />
+        </div>
+        <div>
+          <label class="label" for="email">Email</label>
+          <input class="form-input" type="email" v-model="register_email" />
+        </div>
+        <div>
+          <label class="label" for="password">Password</label>
+          <input class="form-input" type="password" v-model="register_password" />
+        </div>
+        <button class="submit-btn" v-on:click="register">Register</button>
+      </div>
     </div>
-    <div class="register-container"></div>
   </div>
 </template>
 
 <script>
-import UserServices from "../UserService";
+import axios from "axios";
+import Back from "./layout/Back.vue";
 
 export default {
   name: "Login",
-  props: {
-    msg: String
+  components: {
+    Back
   },
-  data: function() {
+  data() {
     return {
-      email: "",
-      password: ""
+      register_name: null,
+      register_email: null,
+      register_password: null,
+      login_password: null,
+      login_email: null,
+      errors: null,
+      response: null
     };
   },
   methods: {
-    async login() {
-      await UserServices.login(this.email, this.password);
-      this.email = "";
-      this.password = "";
+    async register() {
+      axios
+        .post("http://localhost:8000/api/register", {
+          name: this.register_name,
+          email: this.register_email,
+          password: this.register_password
+        })
+        .then(function(response) {
+          console.log(response);
+          location.reload();
+        })
+        .catch(function(e) {
+          console.log(e.response.data);
+          this.errors = e.response.data;
+          alert(e.response.data);
+        });
+    },
+    login() {
+      axios
+        .post("http://localhost:8000/api/login", {
+          email: this.login_email,
+          password: this.login_password
+        })
+        .then(function(res) {
+          localStorage.token = res.data.token;
+          window.location.href = "/";
+        })
+        .catch(function(e) {
+          console.log(e);
+        });
     }
   }
 };
@@ -39,10 +97,62 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.page-container {
+.auth-container {
+  display: block;
+  height: 100vh;
+  background-image: url("/login-background.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
   display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.label {
+  text-align: center;
+  display: block;
+  margin: 3% auto;
+  margin-top: 7%;
+  font-size: 1.5em;
+  color: whitesmoke;
+}
+
+.submit-btn {
+  padding: 10px 30px;
+  display: block;
+  margin: 5% auto;
+  margin-top: 15%;
+  cursor: pointer;
+  border: none;
+  background: rgb(19, 233, 179);
+  color: white;
+  border-radius: 5px;
 }
 .login-container {
-  text-align: left;
+}
+
+.form-input {
+  width: 80%;
+  display: block;
+  margin: auto;
+  border-radius: 5px;
+  border: 2px solid rgb(149, 149, 149);
+  margin: 1% auto;
+  padding: 8px;
+}
+
+.register-container {
+}
+.card-title {
+  text-align: center;
+}
+.card {
+  background-color: rgba(0, 0, 0, 0.548);
+  border-radius: 10px;
+  padding: 3% 3%;
+  min-width: 350px;
+  color: white;
+  margin: auto 5%;
 }
 </style>

@@ -13,11 +13,14 @@ const ranksRoute = require("./routes/rank");
 var urlParser = bodyParser.urlencoded({ extended: false });
 const app = express();
 var port = 8000;
+const corsOptions = {
+  exposedHeaders: 'x-access-token',
+};
+app.use(cors(corsOptions));
 var server = http.Server(app);
 //var io = socketio(server);
 
 //middlewares
-app.use(cors());
 app.use(urlParser);
 app.use(express.json());
 
@@ -40,7 +43,7 @@ mongoose
   .then(() => console.log("Connected to MongoDB!"))
   .catch((err) => console.error("Could not connect to MongoDB..."));
 
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
   res.end("Hello");
 });
 

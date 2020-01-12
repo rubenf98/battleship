@@ -4,7 +4,7 @@ const { User, validate } = require("../model/User");
 const express = require("express");
 const router = express.Router();
 
-router.get("/user/logged", auth, async (req, res) => {
+router.get("/logged", auth, async (req, res) => {
     const user = await User.findById(req.user._id);
     if (!user) {
         res.send(false);
@@ -32,14 +32,18 @@ router.post("/login", async (req, res) => {
         if (err) throw err;
         if (response) {
             const token = user.generateAuthToken();
-
-            res.header("x-auth-token", token).send({
+            res.header("Access-Control-Allow-Origin", "*");
+            res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+            res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, access-control-allow-origin, x-auth-token");
+            res.header("Access-Control-Expose-Headers: x-auth-token")
+            res.send({
                 _id: user._id,
                 name: user.name,
                 email: user.email,
                 points: user.points,
                 league: user.league,
-                counter: user.counter
+                counter: user.counter,
+                token: token
             });
         } else {
             return res.status(400).send("Data does not match!");
