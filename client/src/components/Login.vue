@@ -64,7 +64,7 @@ export default {
     };
   },
   methods: {
-    async register() {
+    register() {
       axios
         .post("http://localhost:8000/api/register", {
           name: this.register_name,

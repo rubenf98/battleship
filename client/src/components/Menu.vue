@@ -1,6 +1,38 @@
 <template>
   <div>
     <Auth :logged="logged" />
+    <div id="particle-container">
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+    </div>
 
     <div class="menu-container">
       <div class="left-container">
@@ -15,7 +47,7 @@
           <router-link class="menu-item" to="/room">
             <span class="item">new game</span>
           </router-link>
-          <router-link class="menu-item" to="/room">
+          <router-link class="menu-item" to="/room/search">
             <span class="item">find game</span>
           </router-link>
           <router-link class="menu-item" to="/room">
@@ -56,6 +88,9 @@ export default {
 };
 </script>
 
+
+
+
 <style scoped>
 .menu-container {
   display: block;
@@ -68,6 +103,7 @@ export default {
   align-items: center;
   font-family: "Candal", sans-serif;
 }
+
 .left-container {
   height: 80%;
   display: flex;
@@ -127,4 +163,7 @@ export default {
 .menu-item:hover .item {
   color: white;
 }
+
+
+
 </style>
