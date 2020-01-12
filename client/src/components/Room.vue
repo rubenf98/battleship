@@ -11,7 +11,7 @@
       <div class="board" id="board2"></div>
     </div>
     <div id="button-container">
-      <img id="create-board-btn" v-on:click="createBoards" src="/play.png" alt />
+      <img id="create-board-btn" v-on:click="createBoards" src="/play-btn.png" alt />
     </div>
   </div>
 </template>
@@ -19,10 +19,11 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style >
 .room-container {
-  background-image: url("/room-wall.jpg");
-  background-repeat: no-repeat;
-  background-size: 100%;
   height: 100vh;
+  background-image: url("/room-background.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
   display: flex;
   flex-flow: column;
 }
@@ -50,11 +51,22 @@
   margin: 0;
   border: 1px solid black;
 }
+.room-container .piece1:hover {
+  background-color: rgba(10, 41, 216, 0.411);
+  border: 1px solid rgba(0, 0, 0, 0.562);
+  cursor: pointer;
+}
 
 .room-container .piece2 {
   background-color: rgba(250, 0, 0, 0.616);
   margin: 0;
   border: 1px solid black;
+}
+
+.room-container .piece2:hover {
+  background-color: rgba(250, 0, 0, 0.411);
+  border: 1px solid rgba(0, 0, 0, 0.562);
+  cursor: pointer;
 }
 
 .room-container .slip-container img {
@@ -79,6 +91,7 @@
 
 <script>
 import io from "socket.io-client";
+var socket = io("http://localhost:3000");
 
 export default {
   name: "Room",
@@ -115,14 +128,34 @@ export default {
       let button = document.getElementById("create-board-btn");
       button.style.display = "none";
 
-      var socket = io("http://localhost:3000");
+      addEventListenerOnBoard();
+
       socket.on("message", data => {
         console.log(data);
       });
-    },
-    clickEvent() {}
+    }
   }
 };
+function addEventListenerOnBoard() {
+  var classPiece1 = document.getElementsByClassName("piece1");
+  var classPiece2 = document.getElementsByClassName("piece2");
+
+  for (let x = 0; x < classPiece1.length; x++) {
+    classPiece1[x].addEventListener("click", clickPiece, false);
+  }
+  for (let x = 0; x < classPiece2.length; x++) {
+    classPiece2[x].addEventListener("click", clickPiece, false);
+  }
+}
+function clickPiece() {
+  console.log(event.toElement.id);
+  socket.emit("click-piece", `${event.toElement.id}`);
+}
+
+//SOCKET IO
+socket.on("click-response", data => {
+  console.log(data);
+});
 </script>
 
 
