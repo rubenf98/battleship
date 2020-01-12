@@ -1,7 +1,5 @@
 <template>
   <div class="room-container">
-    <script type="application/javascript" src="http://localhost:3000/socket.io/socket.io.js"></script>
-    <script></script>
     <div id="room-page-header">
       <h1>Let the Battle Begin!</h1>
     </div>
@@ -80,8 +78,7 @@
 </style>
 
 <script>
-//import UserServices from "../UserService";
-//import VueSocketio from "vue-socket.io";
+import io from "socket.io-client";
 
 export default {
   name: "Room",
@@ -93,11 +90,6 @@ export default {
       email: "",
       password: ""
     };
-  },
-  mounted() {
-    let io = document.createElement("script");
-    io.setAttribute("src", "http://cdn.socket.io/socket.io-1.4.5.js");
-    document.head.appendChild(io);
   },
   methods: {
     createBoards() {
@@ -127,7 +119,8 @@ export default {
       socket.on("message", data => {
         console.log(data);
       });
-    }
+    },
+    clickEvent() {}
   }
 };
 </script>
