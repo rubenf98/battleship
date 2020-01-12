@@ -3,18 +3,20 @@ var bodyParser = require("body-parser");
 const config = require("config");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const app = express();
-const http = require("http").Server(app);
-const io = require("socket.io")(http);
+const http = require("http");
+const io = require("socket.io")(3000);
 
 const usersRoute = require("./routes/user");
 const roomsRoute = require("./routes/room");
 const ranksRoute = require("./routes/rank");
 
 var urlParser = bodyParser.urlencoded({ extended: false });
-
+const app = express();
 var port = 8000;
+var server = http.Server(app);
+//var io = socketio(server);
 
+//middlewares
 app.use(cors());
 app.use(urlParser);
 app.use(express.json());
@@ -35,18 +37,23 @@ mongoose
     useUnifiedTopology: true,
     useNewUrlParser: true
   })
-  .then(() => console.log("Connected to MongoDB..."))
+  .then(() => console.log("Connected to MongoDB!"))
   .catch((err) => console.error("Could not connect to MongoDB..."));
 
 app.get("/", function(req, res) {
   res.end("Hello");
 });
 
-app.listen(port, () => console.log(`Listening on port ${port}...`));
-http.listen(3000, () => {
-  console.log(`Listening on port 3000...`);
+//app.listen(port, () => console.log(`Listening on port ${port}...`));
+server.listen(port, () => {
+  console.log(`Listening on port ${port}`);
 });
 
-io.on("connection", (socket) => {
-  console.log("Someone connected");
+// SOCKET IO
+io.sockets.on("connection", (socket) => {
+  console.log("user connected");
+  socket.emit("message", "SOcket.io");
+  io.on("start", () => {
+    console.log("Game started");
+  });
 });
