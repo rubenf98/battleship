@@ -10,6 +10,7 @@ io.on("connection", (socket) => {
   //Response for pressing start
   socket.on("player-start", (data) => {
     const decoded = jwt.verify(data.token, config.get("myprivatekey"));
+    console.log("ID DA SALA:" + data.id_room);
     playerReady(decoded._id, data.id_room, (res) => {
       if (res == 1) {
         defineBoard(data.id_room, decoded._id, (indices, player) => {
@@ -74,7 +75,7 @@ async function playerReady(player_id, room_id, callback) {
     room.player2Ready = true;
     await room.save();
   }
-  if ((room.player1Ready == room.player2Ready) == true) {
+  if (room.player1Ready == true && room.player2Ready == true) {
     room.status = "running";
     room.turn = "player1";
     await room.save();
