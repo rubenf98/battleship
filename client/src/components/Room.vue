@@ -128,6 +128,10 @@ export default {
   },
   methods: {
     startGame() {
+      socket.emit("player-start", {
+        token: localStorage.token.toString(),
+        id_room: room_id
+      });
       let btn = document.getElementById("play-btn");
       btn.style.display = "none";
 
@@ -135,10 +139,6 @@ export default {
       waitMessage.id = "wait-message";
       waitMessage.innerHTML = "Waiting for your opponent";
       document.getElementById("button-container").appendChild(waitMessage);
-      socket.emit("player-start", {
-        token: localStorage.token.toString(),
-        id_room: room_id
-      });
     }
   }
 };
