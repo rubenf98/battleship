@@ -110,7 +110,6 @@ router.get("/room/:room", auth, async (req, res) => {
   const user = await User.findById(req.user._id).select("_id");
   if (!user) return res.status(404).send("user not found");
 
-
   await Room.findById(req.params.room, (err, room) => {
     if (err) return res.status(404).send("room not found");
 
@@ -142,10 +141,6 @@ router.post("/room", auth, games, async (req, res) => {
     if (err) res.send("erro");
     res.send(room);
   });
-
-
-
-
 });
 
 //Delete specific room
@@ -156,7 +151,7 @@ router.delete("/room/:room", auth, async (req, res) => {
   const room = await Room.findById(req.params.room);
   if (!room) return res.status(404).send("room not found");
 
-  if (room.player1 == user._id) {
+  if (room.player1 == user._id && room.player2 == null) {
     Room.deleteOne({ _id: room._id }, function (err) {
       if (err) res.status(200).send("room deleted");
       else res.status(403).send("room can't be deleted");

@@ -13,6 +13,16 @@
       <div id="button-container">
         <img id="play-btn" v-on:click="startGame" src="/play-btn.png" alt />
       </div>
+      <div v-if="share" class="link-share-container">
+        <label class="link-share-label" for="link_share">Copy link and share it!</label>
+        <input
+          class="link-share-input"
+          type="text"
+          name="link_share"
+          id="link_share"
+          v-model="share"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -100,15 +110,32 @@
 .boatDisplay {
   background-color: black;
 }
+
+.link-share-container {
+  display: flex;
+  margin: 3% auto;
+  justify-content: center;
+  flex-direction: column;
+  width: 350px;
+}
+.link-share-label {
+  text-align: center;
+  color: white;
+  font-size: 2em;
+  font-weight: bold;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+.link-share-input {
+  border-radius: 6px;
+  padding: 10px;
+  width: 100%;
+}
 </style>
 
 <script>
 import axios from "axios";
 import io from "socket.io-client";
-var socket = io();
-window.onload = () => {
-  socket = io("http://localhost:3000");
-};
+var socket = io("http://localhost:3000");
 import Back from "./layout/Back.vue";
 var audio = new Audio("/sounds/song.mp3");
 
@@ -119,7 +146,8 @@ export default {
   },
   data() {
     return {
-      current_room: null
+      current_room: null,
+      share: null
     };
   },
   components: {
@@ -135,6 +163,9 @@ export default {
       })
       .then(res => {
         this.current_room = res.data;
+        if (res.data.type == "private") {
+          this.share = "http://localhost:8080/room/join/" + res.data._id;
+        }
       })
       .catch(function(e) {
         vm.$router.push({
@@ -142,25 +173,36 @@ export default {
           params: { feedback: e.response.data }
         });
       });
+
     createBoards();
     audio.play();
   },
   beforeRouteLeave(to, from, next) {
-    audio.pause();
-    audio.currentTime = 0;
-    if (this.current_room.player2 == null) {
-      console.log("here");
-      axios.delete("http://localhost:8000/api/room/" + this.current_room._id, {
-        headers: {
-          "x-access-token": localStorage.token
-        },
-        data: {
-          room_id: this.current_room._id
-        }
-      });
+    if (
+      confirm(
+        "Do you really want to leave? This may result on you losing the game."
+      )
+    ) {
+      audio.pause();
+      audio.currentTime = 0;
+      if (this.current_room.player2 == null) {
+        console.log("here");
+        axios.delete(
+          "http://localhost:8000/api/room/" + this.current_room._id,
+          {
+            headers: {
+              "x-access-token": localStorage.token
+            },
+            data: {
+              room_id: this.current_room._id
+            }
+          }
+        );
+      }
+      next();
+    } else {
+      next(false);
     }
-
-    next();
   },
   methods: {
     startGame() {
