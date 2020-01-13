@@ -7,12 +7,16 @@ const io = require("socket.io")(3000);
 // SOCKET IO
 io.on("connection", (socket) => {
   console.log("user connected");
-  socket.emit("message", "Socket.io");
   //Response for pressing start
   socket.on("player-start", (data) => {
     const decoded = jwt.verify(data.token, config.get("myprivatekey"));
-    console.log(decoded._id);
-    playerReady(decoded._id, data.id_room);
+    playerReady(decoded._id, data.id_room, (res) => {
+      if (res == 1) {
+        defineBoard(data.id_room, decoded._id, (indices, player) => {
+          socket.emit("both-ready", { boats: indices, player: player });
+        });
+      }
+    });
   });
   //Response for pressing on piece
   socket.on("click-piece", (data) => {
@@ -38,7 +42,30 @@ async function getGameStatus(data, callback) {
   callback(status);
 }
 
-async function playerReady(player_id, room_id) {
+async function defineBoard(room_id, user_id, callback) {
+  let room = await Room.findOne({ _id: room_id });
+  console.log(user_id);
+  var indices = [];
+  if (room.player1 === user_id) {
+    let boatsPos = room.player1Board.indexOf("boat");
+    while (boatsPos != -1) {
+      indices.push(boatsPos);
+      boatsPos = array.indexOf("boat", boatsPos + 1);
+    }
+    console.log("Array boats:" + indices);
+    callback(indices, "player1");
+  } else if (room.player2 === user_id) {
+    let boatsPos = room.player2Board.indexOf("boat");
+    while (boatsPos != -1) {
+      indices.push(boatsPos);
+      boatsPos = array.indexOf("boat", boatsPos + 1);
+    }
+    console.log("Array boats:" + indices);
+    callback(indices, "player2");
+  }
+}
+
+async function playerReady(player_id, room_id, callback) {
   let room = await Room.findOne({ _id: room_id });
   if (player_id == room.player1) {
     room.player1Ready = true;
@@ -51,7 +78,10 @@ async function playerReady(player_id, room_id) {
     room.status = "running";
     room.turn = "player1";
     flag_both_ready = true;
+    callback(1);
     await room.save();
+  } else {
+    callback(0);
   }
 }
 
