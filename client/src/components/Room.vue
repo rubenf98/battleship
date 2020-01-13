@@ -104,11 +104,15 @@
 
 <script>
 import io from "socket.io-client";
-var socket = io("http://localhost:3000");
+var socket = io();
+window.onload = () => {
+  socket = io("http://localhost:3000");
+};
 import Back from "./layout/Back.vue";
 var audio = new Audio("/sounds/song.mp3");
 var pathname = window.location.pathname.split("/");
 var room_id = pathname[2];
+
 export default {
   name: "Room",
   props: {
@@ -128,10 +132,6 @@ export default {
   },
   methods: {
     startGame() {
-      socket.emit("player-start", {
-        token: localStorage.token.toString(),
-        id_room: room_id
-      });
       let btn = document.getElementById("play-btn");
       btn.style.display = "none";
 
@@ -139,6 +139,10 @@ export default {
       waitMessage.id = "wait-message";
       waitMessage.innerHTML = "Waiting for your opponent";
       document.getElementById("button-container").appendChild(waitMessage);
+      socket.emit("player-start", {
+        token: localStorage.token.toString(),
+        id_room: room_id
+      });
     }
   }
 };
