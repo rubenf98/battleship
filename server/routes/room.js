@@ -19,6 +19,7 @@ router.post("/room/random", auth, async (req, res) => {
   });
   if (!room) return res.status(404).send("no rooms available");
 
+  room.player2 = id;
   await room.save();
 
   res.send({
@@ -43,7 +44,7 @@ router.get("/room/history", auth, async (req, res) => {
       $and: [{ status: "finished" }]
     },
     "player1 player2 winner",
-    function(err, rooms) {
+    function (err, rooms) {
       if (!err) {
         if (!rooms)
           return res.status(404).send("you have not finished a game yet");
@@ -64,7 +65,7 @@ router.get("/room/private", auth, async (req, res) => {
       $and: [{ status: "running" }]
     },
     "player1 player2 type status",
-    function(err, rooms) {
+    function (err, rooms) {
       if (!err) {
         if (!rooms) return res.status(404).send("you have no current rooms");
         res.send(rooms);
