@@ -105,10 +105,8 @@
 <script>
 import axios from "axios";
 import io from "socket.io-client";
-var socket = io();
-window.onload = () => {
-  socket = io("http://localhost:3000");
-};
+var socket = io("http://localhost:3000");
+
 import Back from "./layout/Back.vue";
 var audio = new Audio("/sounds/song.mp3");
 
@@ -239,8 +237,6 @@ function createBoards() {
 
 function boardFill(player, boatsPos) {
   let player_id = player.substr(player.length - 1);
-  console.log(player_id);
-  console.log(boatsPos);
   boatsPos.forEach(element => {
     let div = document.getElementById(`${player_id}-${element}`);
     div.style.backgroundColor = "grey";
