@@ -12,14 +12,13 @@ io.on("connection", (socket) => {
   socket.on("click-piece", (data) => {
     console.log(data);
     var send = verifyclick(data);
-    console.log(send);
     socket.emit("click-response", send);
   });
 });
 
 function verifyclick(data) {
   //const room = Room.findById(room_id);
-  //   let board = room.player1Board;
+  //let board = room.player1Board;
   return data;
 }
 

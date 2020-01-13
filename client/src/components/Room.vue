@@ -168,7 +168,10 @@ function addEventListenerOnBoard() {
 }
 function clickPiece() {
   console.log(event.toElement.id);
-  socket.emit("click-piece", `${event.toElement.id}`);
+  socket.emit("click-piece", {
+    piece_id: event.toElement.id,
+    room_id: 2131231
+  });
 }
 
 //SOCKET IO
