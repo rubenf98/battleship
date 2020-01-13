@@ -116,8 +116,6 @@ export default {
   },
   mounted() {
     createBoards();
-  },
-  mounted() {
     audio.play();
   },
   beforeRouteLeave(to, from, next) {
