@@ -11,12 +11,10 @@ io.on("connection", (socket) => {
   //Response for pressing start
   socket.on("player-start", (data) => {
     const decoded = jwt.verify(data.token, config.get("myprivatekey"));
-    console.log(socket.id);
     updateSocketID(data.id_room, decoded._id, socket.id);
     playerReady(decoded._id, data.id_room, (call) => {
       if (call == 1) {
         defineBoard(data.id_room, (indices1, indices2, socket1, socket2) => {
-          console.log("tabuleiro:" + indices1);
           io.to(socket1).emit("both-ready", {
             boats: indices1,
             player: "player1"
@@ -90,10 +88,7 @@ async function defineBoard(room_id, callback) {
 
 async function playerReady(player_id, room_id, callback) {
   let room = await Room.findOne({ _id: room_id });
-  console.log(player_id);
-  console.log(room_id);
   if (player_id == room.player1) {
-    console.log("entrou");
     room.player1Ready = true;
     await room.save();
   } else if (player_id == room.player2) {
@@ -116,10 +111,39 @@ async function verifyclick(data, callback) {
   let playerN = room.player1 == decoded._id ? "player1" : "player2";
   let playerNext = room.player1 != decoded._id ? "player1" : "player2";
   if (room.turn === playerN) {
-    //Verify Array
+    /* data{
+            room_id: '5e1ce40fd08d0008f59e395b',
+            piece_id: '2-52',
+            token: (...)
+    }*/
+    splitPiece_id = data.piece_id.split("-");
+    identifyEnemyPlayer = splitPiece_id[0];
+    identifyEnemyPiece = splitPiece_id[1];
+    if (identifyEnemyPlayer == 1) {
+      let hit_value = room.player1Board[identifyEnemyPiece];
+      if (hit_value == "boat") {
+        room.player1Board[identifyEnemyPiece] = "hit";
+        await room.save();
+        callback("hit");
+      } else {
+        room.turn = playerNext;
+        await room.save();
+        callback("fail");
+      }
+    }
+    if (identifyEnemyPlayer == 2) {
+      let hit_value = room.player2Board[identifyEnemyPiece];
+      if (hit_value == "boat") {
+        room.player2Board[identifyEnemyPiece] = "hit";
+        await room.save();
+        callback("hit");
+      } else {
+        room.turn = playerNext;
+        await room.save();
+        callback("fail");
+      }
+    }
 
-    room.turn = playerNext;
-    await room.save();
     callback(1);
   } else {
     //NOT YOUR TURN

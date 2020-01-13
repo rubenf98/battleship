@@ -28,7 +28,7 @@
 </template>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style >
+<style>
 .room-container {
   position: absolute;
   width: 100%;
@@ -289,11 +289,10 @@ function addEventListenerOnBoard() {
     classPiece2[x].addEventListener("click", clickPiece, false);
   }
 }
+
 function clickPiece() {
   var pathname = window.location.pathname.split("/");
   var room_id = pathname[2];
-  console.log(room_id);
-  console.log(event.toElement.id);
   socket.emit("click-piece", {
     room_id: room_id,
     piece_id: event.toElement.id,
@@ -340,6 +339,7 @@ function boardFill(player, boatsPos) {
 //SOCKET IO
 socket.on("click-response", data => {
   console.log(data);
+  //READ DATA!
 });
 socket.on("not-your-turn", () => {
   alert("Wait for your turn");
@@ -353,5 +353,3 @@ socket.on("both-ready", data => {
   boardFill(data.player, data.boats);
 });
 </script>
-
-
