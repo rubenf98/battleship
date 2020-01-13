@@ -97,6 +97,9 @@
   color: white;
   font-size: 3em;
 }
+.boatDisplay {
+  background-color: black;
+}
 </style>
 
 <script>
@@ -125,10 +128,6 @@ export default {
   },
   methods: {
     startGame() {
-      socket.emit("player-start", {
-        token: localStorage.token.toString(),
-        id_room: room_id
-      });
       let btn = document.getElementById("play-btn");
       btn.style.display = "none";
 
@@ -136,6 +135,10 @@ export default {
       waitMessage.id = "wait-message";
       waitMessage.innerHTML = "Waiting for your opponent";
       document.getElementById("button-container").appendChild(waitMessage);
+      socket.emit("player-start", {
+        token: localStorage.token.toString(),
+        id_room: room_id
+      });
     }
   }
 };
@@ -163,7 +166,7 @@ function clickPiece() {
 function createBoards() {
   let board1 = document.getElementById("board1");
   //var board = document.getElementById("board");
-  for (let x = 1; x < 101; x++) {
+  for (let x = 0; x < 100; x++) {
     let element = document.createElement("div");
     element.id = `1-${x}`;
     board1.appendChild(element);
@@ -171,7 +174,7 @@ function createBoards() {
   }
   var board2 = document.getElementById("board2");
   //var board = document.getElementById("board");
-  for (let x = 1; x < 101; x++) {
+  for (let x = 0; x < 100; x++) {
     let element2 = document.createElement("div");
     element2.id = `2-${x}`;
     board2.appendChild(element2);
@@ -188,6 +191,16 @@ function createBoards() {
   });
 }
 
+function boardFill(player, boatsPos) {
+  let player_id = player.substr(player.length - 1);
+  console.log(player_id);
+  console.log(boatsPos);
+  boatsPos.forEach(element => {
+    let div = document.getElementById(`${player_id}-${element}`);
+    div.style.backgroundColor = "grey";
+  });
+}
+
 //SOCKET IO
 socket.on("click-response", data => {
   console.log(data);
@@ -197,6 +210,11 @@ socket.on("not-your-turn", () => {
 });
 socket.on("both-players-not-ready", () => {
   alert("You need to press start and wait for the other player");
+});
+socket.on("both-ready", data => {
+  let message = document.getElementById("wait-message");
+  message.innerHTML = "Playing";
+  boardFill(data.player, data.boats);
 });
 </script>
 

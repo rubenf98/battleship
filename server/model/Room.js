@@ -1,5 +1,6 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
+const { initial } = require("../helper");
 
 const RoomSchema = new mongoose.Schema({
   player1: {
@@ -28,13 +29,13 @@ const RoomSchema = new mongoose.Schema({
     type: Array,
     minItems: 100,
     maxItems: 100,
-    default: defaultBoard(100)
+    default: Board()
   },
   player2Board: {
     type: Array,
     minItems: 100,
     maxItems: 100,
-    default: defaultBoard(100)
+    default: Board()
   },
   player1Ready: {
     type: Boolean,
@@ -52,11 +53,15 @@ const RoomSchema = new mongoose.Schema({
 
 const Room = mongoose.model("Room", RoomSchema);
 
-function defaultBoard(min) {
-  var array = [];
-  for (let index = 0; index < min; index++) {
-    array.push("empty");
-  }
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function Board() {
+  let x = getRandomInt(0, 2);
+  array = initial[x];
   return array;
 }
 
