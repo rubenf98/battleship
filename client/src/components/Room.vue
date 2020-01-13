@@ -103,31 +103,67 @@
 </style>
 
 <script>
+import axios from "axios";
 import io from "socket.io-client";
 var socket = io("http://localhost:3000");
 import Back from "./layout/Back.vue";
 var audio = new Audio("/sounds/song.mp3");
-var pathname = window.location.pathname.split("/");
-var room_id = pathname[2];
+
 export default {
   name: "Room",
   props: {
     msg: String
   },
+  data() {
+    return {
+      current_room: null
+    };
+  },
   components: {
     Back
   },
   mounted() {
+    const vm = this;
+    var pathname = window.location.pathname.split("/");
+    var room_id = pathname[2];
+    axios
+      .get("http://localhost:8000/api/room/" + room_id, {
+        headers: { "x-access-token": localStorage.token }
+      })
+      .then(res => {
+        this.current_room = res.data;
+      })
+      .catch(function(e) {
+        vm.$router.push({
+          name: "menu",
+          params: { feedback: e.response.data }
+        });
+      });
     createBoards();
     audio.play();
   },
   beforeRouteLeave(to, from, next) {
     audio.pause();
     audio.currentTime = 0;
+    if (this.current_room.player2 == null) {
+      console.log("here");
+      axios.delete("http://localhost:8000/api/room/" + this.current_room._id, {
+        headers: {
+          "x-access-token": localStorage.token
+        },
+        data: {
+          room_id: this.current_room._id
+        }
+      });
+    }
+
     next();
   },
   methods: {
     startGame() {
+      var pathname = window.location.pathname.split("/");
+      var room_id = pathname[2];
+      console.log(room_id);
       socket.emit("player-start", {
         token: localStorage.token.toString(),
         id_room: room_id
@@ -155,6 +191,9 @@ function addEventListenerOnBoard() {
   }
 }
 function clickPiece() {
+  var pathname = window.location.pathname.split("/");
+  var room_id = pathname[2];
+  console.log(room_id);
   console.log(event.toElement.id);
   socket.emit("click-piece", {
     room_id: room_id,

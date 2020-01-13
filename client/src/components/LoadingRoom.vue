@@ -20,24 +20,50 @@ export default {
   },
   mounted() {
     const vm = this;
-    axios
-      .post("http://localhost:8000/api/room/random", "body", {
-        headers: { "x-access-token": localStorage.token }
-      })
-      .then(function(response) {
-        setTimeout(function() {
-          vm.$router.push("/room/" + response.data._id);
-        }, 5800);
-      })
-      .catch(function(e) {
-        setTimeout(function() {
-          vm.$router.push({
-            name: "menu",
-            params: { feedback: e.response.data }
-          });
-          console.log(e.response.data);
-        }, 5800);
-      });
+    console.log(this.$route.params.room);
+    if (!this.$route.params.room) {
+      axios
+        .post("http://localhost:8000/api/room/random", "body", {
+          headers: { "x-access-token": localStorage.token }
+        })
+        .then(function(response) {
+          setTimeout(function() {
+            vm.$router.push("/room/" + response.data._id);
+          }, 5800);
+        })
+        .catch(function(e) {
+          setTimeout(function() {
+            vm.$router.push({
+              name: "menu",
+              params: { feedback: e.response.data }
+            });
+            console.log(e.response.data);
+          }, 5800);
+        });
+    } else {
+      axios
+        .post(
+          "http://localhost:8000/api/room/join/" + this.$route.params.room,
+          "body",
+          {
+            headers: { "x-access-token": localStorage.token }
+          }
+        )
+        .then(function(response) {
+          setTimeout(function() {
+            vm.$router.push("/room/" + response.data._id);
+          }, 5800);
+        })
+        .catch(function(e) {
+          setTimeout(function() {
+            vm.$router.push({
+              name: "menu",
+              params: { feedback: e.response.data }
+            });
+            console.log(e.response.data);
+          }, 5800);
+        });
+    }
   }
 };
 </script>

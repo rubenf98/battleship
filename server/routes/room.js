@@ -75,7 +75,7 @@ router.get("/room/private", auth, async (req, res) => {
 });
 
 //Join one specific room
-router.post("/room/:room", auth, async (req, res) => {
+router.post("/room/join/:room", auth, async (req, res) => {
   const user = await User.findById(req.user._id).select("_id");
   if (!user) return res.status(404).send("user not found");
 
@@ -84,7 +84,7 @@ router.post("/room/:room", auth, async (req, res) => {
 
   if (room.type == "private") {
     if (room.player2 == null) {
-      if (room.player1 != user._id) {
+      if (room.player1 != user._id && room.player2 != user._id) {
         room.player2 = user._id;
         await room.save();
 
@@ -98,11 +98,11 @@ router.post("/room/:room", auth, async (req, res) => {
           loser: room.loser
         });
       }
-      return res.status(403).send("you already registered in this room");
+      else res.status(403).send("you already registered in this room");
     }
-    return res.status(403).send("room already full");
+    else res.status(403).send("room already full");
   }
-  return res.status(403).send("this room does not support link sharing");
+  else res.status(403).send("this room does not support link sharing");
 });
 
 //Get one specific room
@@ -110,19 +110,16 @@ router.get("/room/:room", auth, async (req, res) => {
   const user = await User.findById(req.user._id).select("_id");
   if (!user) return res.status(404).send("user not found");
 
-  const room = await Room.findById(req.params.room);
-  if (!room) return res.status(404).send("room not found");
 
-  res.send({
-    _id: room._id,
-    player1: room.player1,
-    player2: room.player2,
-    type: room.type,
-    status: room.status,
-    winner: room.winner,
-    player1Board: room.player1Board,
-    player2Board: room.player2Board
+  await Room.findById(req.params.room, (err, room) => {
+    if (err) return res.status(404).send("room not found");
+
+    if (room.player1 == user._id || room.player2 == user._id) {
+      res.send(room);
+    }
+    else res.status(400).send("you can't access this room");
   });
+
 });
 
 //Create new room
@@ -134,25 +131,37 @@ router.post("/room", auth, games, async (req, res) => {
   const user = await User.findById(req.user._id).select("_id");
   if (!user) return res.status(403).send("you need to login!");
 
-  room = new Room({
+  let room = new Room({
     player1: user._id,
     player2: null,
     type: req.body.type,
     winner: null
   });
 
-  await room.save();
-
-  res.send({
-    _id: room._id,
-    player1: room.player1,
-    player2: room.player2,
-    type: room.type,
-    status: room.status,
-    winner: room.winner,
-    player1Board: room.player1Board,
-    player2Board: room.player2Board
+  room.save(function (err) {
+    if (err) res.send("erro");
+    res.send(room);
   });
+
+
+
+
+});
+
+//Delete specific room
+router.delete("/room/:room", auth, async (req, res) => {
+  const user = await User.findById(req.user._id).select("_id");
+  if (!user) return res.status(403).send("you need to login!");
+
+  const room = await Room.findById(req.params.room);
+  if (!room) return res.status(404).send("room not found");
+
+  if (room.player1 == user._id) {
+    Room.deleteOne({ _id: room._id }, function (err) {
+      if (err) res.status(200).send("room deleted");
+      else res.status(403).send("room can't be deleted");
+    });
+  }
 });
 
 module.exports = router;

@@ -17,6 +17,7 @@ const routes = [
   { path: "/login", component: Login, name: "login" },
   { path: "/room", component: RoomSelection, name: "selection" },
   { path: '/room/search', component: LoadingRoom, name: "loadingroom" },
+  { path: '/room/join/:room', component: LoadingRoom, name: "loadingroom" },
   { path: '/room/continue', component: Continue, name: "continue" },
   { path: '/room/history', component: History, name: "history" },
   { path: "/room/:room", component: Room, name: "room" },

@@ -7,9 +7,11 @@ const io = require("socket.io")(3000);
 // SOCKET IO
 io.on("connection", (socket) => {
   console.log("user connected");
+
   //Response for pressing start
   socket.on("player-start", (data) => {
     const decoded = jwt.verify(data.token, config.get("myprivatekey"));
+    console.log("user" + decoded._id)
     playerReady(decoded._id, data.id_room, (res) => {
       if (res == 1) {
         defineBoard(data.id_room, decoded._id, (indices, player) => {
@@ -44,37 +46,42 @@ async function getGameStatus(data, callback) {
 
 async function defineBoard(room_id, user_id, callback) {
   let room = await Room.findOne({ _id: room_id });
-  console.log(user_id);
   var indices = [];
+
   if (room.player1 === user_id) {
     let boatsPos = room.player1Board.indexOf("boat");
     while (boatsPos != -1) {
       indices.push(boatsPos);
       boatsPos = array.indexOf("boat", boatsPos + 1);
     }
-    console.log("Array boats:" + indices);
+
     callback(indices, "player1");
-  } else if (room.player2 === user_id) {
+
+  }
+  else if (room.player2 === user_id) {
     let boatsPos = room.player2Board.indexOf("boat");
     while (boatsPos != -1) {
       indices.push(boatsPos);
       boatsPos = array.indexOf("boat", boatsPos + 1);
     }
-    console.log("Array boats:" + indices);
     callback(indices, "player2");
   }
 }
 
+
+//FIXED
 async function playerReady(player_id, room_id, callback) {
   let room = await Room.findOne({ _id: room_id });
+
   if (player_id == room.player1) {
     room.player1Ready = true;
     await room.save();
-  } else {
+  } else if (player_id == room.player2) {
     room.player2Ready = true;
     await room.save();
   }
-  if ((room.player1Ready == room.player2Ready) == true) {
+
+  if (room.player1Ready == true && room.player2Ready == true) {
     room.status = "running";
     room.turn = "player1";
     await room.save();
