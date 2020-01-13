@@ -9,15 +9,13 @@
         <table class="table">
           <thead>
             <th>#</th>
-            <th>Player 1</th>
-            <th>Player 2</th>
+            <th>Adversary</th>
             <th>Result</th>
           </thead>
           <tbody>
             <tr v-for="(room, index) in rooms" :key="room._id">
               <td>{{index + 1}}</td>
-              <td>{{room.player1}}</td>
-              <td>{{room.player2}}</td>
+              <td>{{user._id == room.player1 ? room.player2 : room.player1}}</td>
               <td>{{user._id == room.winner ? "winner" : "loser"}}</td>
             </tr>
           </tbody>
@@ -83,6 +81,7 @@ export default {
   border-radius: 10px;
   color: white;
   text-align: center;
+  overflow-x: auto;
 }
 .no-data {
   height: 400px;

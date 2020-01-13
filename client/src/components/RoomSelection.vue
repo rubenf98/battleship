@@ -52,7 +52,7 @@ export default {
         .catch(function(e) {
           vm.$router.push({
             name: "menu",
-            params: { feedback: "e.response.data" }
+            params: { feedback: e.response.data }
           });
           console.log(e.response.data);
         });
@@ -75,7 +75,7 @@ export default {
         .catch(function(e) {
           vm.$router.push({
             name: "menu",
-            params: { feedback: "e.response.data" }
+            params: { feedback: e.response.data }
           });
           console.log(e.response.data);
         });

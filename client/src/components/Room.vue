@@ -103,9 +103,9 @@
 import io from "socket.io-client";
 var socket = io("http://localhost:3000");
 import Back from "./layout/Back.vue";
+var audio = new Audio("/sounds/song.mp3");
 var pathname = window.location.pathname.split("/");
 var room_id = pathname[2];
-
 export default {
   name: "Room",
   props: {
@@ -116,6 +116,14 @@ export default {
   },
   mounted() {
     createBoards();
+  },
+  mounted() {
+    audio.play();
+  },
+  beforeRouteLeave(to, from, next) {
+    audio.pause();
+    audio.currentTime = 0;
+    next();
   },
   methods: {
     startGame() {

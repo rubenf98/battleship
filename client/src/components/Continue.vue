@@ -10,15 +10,13 @@
           <thead>
             <th>#</th>
             <th>Room</th>
-            <th>Player 1</th>
-            <th>Player 2</th>
+            <th>Adversary</th>
           </thead>
           <tbody>
             <tr v-for="(room, index) in rooms" :key="room._id" @click="redirectRoom(room._id)">
               <td>{{index + 1}}</td>
               <td>{{room._id}}</td>
-              <td>{{room.player1}}</td>
-              <td>{{room.player2}}</td>
+              <td>{{user._id == room.player1 ? room.player2 : room.player1}}</td>
             </tr>
           </tbody>
         </table>
@@ -40,7 +38,8 @@ export default {
   },
   data() {
     return {
-      rooms: null
+      rooms: null,
+      user: null
     };
   },
   created: function() {
@@ -50,6 +49,13 @@ export default {
       })
       .then(res => {
         this.rooms = res.data;
+      });
+    axios
+      .get("http://localhost:8000/api/user/current", {
+        headers: { "x-access-token": localStorage.token }
+      })
+      .then(res => {
+        this.user = res.data;
       });
   },
   methods: {
@@ -80,6 +86,7 @@ export default {
   border-radius: 10px;
   color: white;
   text-align: center;
+  overflow-x: auto;
 }
 .no-data {
   height: 400px;
