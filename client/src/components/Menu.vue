@@ -92,7 +92,6 @@ import Auth from "./layout/Auth.vue";
 let $ = JQuery;
 
 export default {
-  name: "menu",
   props: ["logged", "feedback"],
   components: {
     Auth

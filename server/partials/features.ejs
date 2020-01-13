@@ -1,0 +1,33 @@
+<div id="features-container">
+    <% if(locals.model){%>
+    <h1><%= model.subject %></h1>
+    <ul>
+        <% for(var i = 0; i < model.items.length; i++) {%>
+        <li><%= model.items[i].name %></li>
+        <% } %>
+    </ul>
+    <% } %>
+</div>
+
+<script>
+    var model = {
+        subject: "Template Engines",
+        items: [
+            { name: "Visual Animation" },
+            { name: "Sound Animation" },
+            { name: "Frontend library socket.io" },
+            { name: "Backend library socket.io" },
+            { name: "Framework frontend VueJs" },
+            { name: "Framework backend Express" },
+            { name: "Template engine EmbedJS" },
+            { name: "Players registration" },
+            { name: "Games registration" },
+            { name: "Save game current state" },
+            { name: "Visual representation of the game" },
+            { name: "Authentication using JsonWebTokens" },
+            { name: "Ranks implementation with points and leagues" },
+        ]
+    };
+    var html = new EJS({ url: './features.ejs' }).render(data);
+    document.getElementById("features-container").innerHTML = html;
+</script>

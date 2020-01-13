@@ -4,6 +4,7 @@ const config = require("config");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const http = require("http");
+var ejs = require('ejs');
 const game = require("./game.js");
 
 const usersRoute = require("./routes/user");
@@ -23,6 +24,9 @@ var server = http.Server(app);
 //middlewares
 app.use(urlParser);
 app.use(express.json());
+app.use(express.static("public"));
+app.set("view engine", "ejs");
+app.set('views', __dirname + '/partials');
 
 //ROUTES
 app.use("/api", usersRoute);
@@ -43,8 +47,8 @@ mongoose
   .then(() => console.log("Connected to MongoDB!"))
   .catch((err) => console.error("Could not connect to MongoDB..."));
 
-app.get("/", function(req, res) {
-  res.end("Hello");
+app.get("/", function (req, res) {
+  res.render('index');
 });
 
 //app.listen(port, () => console.log(`Listening on port ${port}...`));
