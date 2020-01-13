@@ -69,13 +69,13 @@ function getRandomInt(min, max) {
 
 function Board1() {
   let x = getRandomInt(0, 2);
-  array = initial[x];
-  return array;
+  array1 = initial[x];
+  return array1;
 }
 function Board2() {
-  let x = getRandomInt(0, 2);
-  array = initial[x];
-  return array;
+  let y = getRandomInt(0, 2);
+  array2 = initial[y];
+  return array2;
 }
 
 function validateRoom(room) {
