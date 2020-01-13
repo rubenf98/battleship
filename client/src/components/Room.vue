@@ -4,8 +4,8 @@
 
     <div class="room-container">
       <div id="boards">
-        <div class="board" id="board1"></div>
-        <div class="slip-container">
+        <div class="board responsive-top-margin" id="board1"></div>
+        <div class="split-container">
           <img src="/vs.png" alt />
         </div>
         <div class="board" id="board2"></div>
@@ -41,6 +41,7 @@
   background-size: cover;
   display: flex;
   flex-flow: column;
+  overflow: auto;
 }
 
 .room-container #boards {
@@ -48,12 +49,14 @@
   width: 100%;
   display: none;
   justify-content: center;
+  flex-wrap: wrap;
 }
 .room-container .board {
   display: grid;
   grid-template-columns: repeat(10, 40px);
   grid-template-rows: repeat(10, 40px);
   justify-content: center;
+  margin: 3% 1%;
 }
 
 .room-container .piece1 {
@@ -79,12 +82,12 @@
   cursor: pointer;
 }
 
-.room-container .slip-container {
+.room-container .split-container {
   display: flex;
   align-items: center;
 }
 
-.room-container .slip-container img {
+.room-container .split-container img {
   width: 300px;
 }
 
@@ -116,7 +119,8 @@
   margin: 3% auto;
   justify-content: center;
   flex-direction: column;
-  width: 350px;
+  width: 30%;
+  min-width: 250px;
 }
 .link-share-label {
   text-align: center;
@@ -128,7 +132,53 @@
 .link-share-input {
   border-radius: 6px;
   padding: 10px;
-  width: 100%;
+  margin: auto;
+  width: 70%;
+}
+
+.room-container .hit {
+  background-image: url("/icons/hit.svg");
+  background-size: cover;
+}
+
+.room-container .fail {
+  background-image: url("/icons/fail.svg");
+  background-size: cover;
+}
+
+@media only screen and (max-width: 1267px) {
+  .room-container .split-container {
+    display: none;
+  }
+  .room-container .board {
+    grid-template-columns: repeat(10, 30px);
+    grid-template-rows: repeat(10, 30px);
+    margin: 5% auto;
+  }
+  .link-share-label {
+    font-size: 1.5em;
+  }
+  .link-share-container {
+    width: 30%;
+  }
+}
+@media only screen and (max-width: 500px) {
+  .room-container .board {
+    grid-template-columns: repeat(10, 25px);
+    grid-template-rows: repeat(10, 25px);
+  }
+
+  .room-container .responsive-top-margin {
+    margin-top: 80px;
+  }
+
+  .link-share-label {
+    font-size: 1.2em;
+  }
+  .link-share-input {
+    padding: 5px;
+    margin: 5% auto;
+  }
 }
 </style>
 
@@ -163,7 +213,7 @@ export default {
       })
       .then(res => {
         this.current_room = res.data;
-        if (res.data.type == "private") {
+        if (res.data.type == "private" && res.data.status == "pending") {
           this.share = "http://localhost:8080/room/join/" + res.data._id;
         }
       })
