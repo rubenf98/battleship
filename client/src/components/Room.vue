@@ -3,9 +3,6 @@
     <Back />
 
     <div class="room-container">
-      <div id="room-page-header">
-        <h1>Let the Battle Begin!</h1>
-      </div>
       <div id="boards">
         <div class="board" id="board1"></div>
         <div class="slip-container">
@@ -14,7 +11,7 @@
         <div class="board" id="board2"></div>
       </div>
       <div id="button-container">
-        <img id="create-board-btn" v-on:click="createBoards" src="/play-btn.png" alt />
+        <img id="play-btn" v-on:click="startGame" src="/play-btn.png" alt />
       </div>
     </div>
   </div>
@@ -27,21 +24,17 @@
   width: 100%;
   height: 100%;
   z-index: -1;
-  background-image: url("/room-background.jpg");
+  background-image: url("/room-wall.gif");
   background-repeat: no-repeat;
   background-attachment: fixed;
+  background-position: center;
   background-size: cover;
   display: flex;
   flex-flow: column;
 }
-.room-container h1 {
-  text-align: center;
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-  font-size: 100px;
-}
 
 .room-container #boards {
+  margin-top: 5%;
   width: 100%;
   display: none;
   justify-content: center;
@@ -76,14 +69,19 @@
   cursor: pointer;
 }
 
+.room-container .slip-container {
+  display: flex;
+  align-items: center;
+}
+
 .room-container .slip-container img {
   width: 300px;
 }
 
-.room-container #create-board-btn {
-  width: 300px;
+.room-container #play-btn {
+  width: 100px;
 }
-.room-container #create-board-btn:hover {
+.room-container #play-btn:hover {
   cursor: pointer;
   transform: scale(1.2);
 }
@@ -94,12 +92,19 @@
   justify-content: center;
   width: 100%;
 }
+
+#wait-message {
+  color: white;
+  font-size: 3em;
+}
 </style>
 
 <script>
 import io from "socket.io-client";
 var socket = io("http://localhost:3000");
 import Back from "./layout/Back.vue";
+var pathname = window.location.pathname.split("/");
+var room_id = pathname[2];
 
 export default {
   name: "Room",
@@ -109,44 +114,26 @@ export default {
   components: {
     Back
   },
-  data: function() {
-    return {
-      email: "",
-      password: ""
-    };
+  mounted() {
+    createBoards();
   },
   methods: {
-    createBoards() {
-      let board1 = document.getElementById("board1");
-      //var board = document.getElementById("board");
-      for (let x = 1; x < 101; x++) {
-        let element = document.createElement("div");
-        element.id = `1-${x}`;
-        board1.appendChild(element);
-        element.classList.add("piece1");
-      }
-      var board2 = document.getElementById("board2");
-      //var board = document.getElementById("board");
-      for (let x = 1; x < 101; x++) {
-        let element2 = document.createElement("div");
-        element2.id = `2-${x}`;
-        board2.appendChild(element2);
-
-        element2.classList.add("piece2");
-      }
-      let display_boards = document.getElementById("boards");
-      display_boards.style.display = "flex";
-      let button = document.getElementById("create-board-btn");
-      button.style.display = "none";
-
-      addEventListenerOnBoard();
-
-      socket.on("message", data => {
-        console.log(data);
+    startGame() {
+      socket.emit("player-start", {
+        token: localStorage.token.toString(),
+        id_room: room_id
       });
+      let btn = document.getElementById("play-btn");
+      btn.style.display = "none";
+
+      let waitMessage = document.createElement("p");
+      waitMessage.id = "wait-message";
+      waitMessage.innerHTML = "Waiting for your opponent";
+      document.getElementById("button-container").appendChild(waitMessage);
     }
   }
 };
+
 function addEventListenerOnBoard() {
   var classPiece1 = document.getElementsByClassName("piece1");
   var classPiece2 = document.getElementsByClassName("piece2");
@@ -161,14 +148,49 @@ function addEventListenerOnBoard() {
 function clickPiece() {
   console.log(event.toElement.id);
   socket.emit("click-piece", {
+    room_id: room_id,
     piece_id: event.toElement.id,
-    room_id: 2131231
+    token: localStorage.token
+  });
+}
+
+function createBoards() {
+  let board1 = document.getElementById("board1");
+  //var board = document.getElementById("board");
+  for (let x = 1; x < 101; x++) {
+    let element = document.createElement("div");
+    element.id = `1-${x}`;
+    board1.appendChild(element);
+    element.classList.add("piece1");
+  }
+  var board2 = document.getElementById("board2");
+  //var board = document.getElementById("board");
+  for (let x = 1; x < 101; x++) {
+    let element2 = document.createElement("div");
+    element2.id = `2-${x}`;
+    board2.appendChild(element2);
+
+    element2.classList.add("piece2");
+  }
+  let display_boards = document.getElementById("boards");
+  display_boards.style.display = "flex";
+
+  addEventListenerOnBoard();
+
+  socket.on("message", data => {
+    console.log(data);
   });
 }
 
 //SOCKET IO
 socket.on("click-response", data => {
   console.log(data);
+});
+socket.on("not-your-turn", () => {
+  alert("Wait for your turn");
+});
+socket.on("both-players-not-ready", () => {
+  alert("You need to press start and wait for the other player");
 });
 </script>
 
