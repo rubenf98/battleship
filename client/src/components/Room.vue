@@ -105,7 +105,10 @@
 <script>
 import axios from "axios";
 import io from "socket.io-client";
-var socket = io("http://localhost:3000");
+var socket = io();
+window.onload = () => {
+  socket = io("http://localhost:3000");
+};
 import Back from "./layout/Back.vue";
 var audio = new Audio("/sounds/song.mp3");
 
@@ -175,6 +178,10 @@ export default {
       waitMessage.id = "wait-message";
       waitMessage.innerHTML = "Waiting for your opponent";
       document.getElementById("button-container").appendChild(waitMessage);
+      socket.emit("player-start", {
+        token: localStorage.token.toString(),
+        id_room: room_id
+      });
     }
   }
 };

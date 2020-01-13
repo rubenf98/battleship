@@ -29,13 +29,13 @@ const RoomSchema = new mongoose.Schema({
     type: Array,
     minItems: 100,
     maxItems: 100,
-    default: Board()
+    default: Board1()
   },
   player2Board: {
     type: Array,
     minItems: 100,
     maxItems: 100,
-    default: Board()
+    default: Board2()
   },
   player1Ready: {
     type: Boolean,
@@ -44,6 +44,14 @@ const RoomSchema = new mongoose.Schema({
   player2Ready: {
     type: Boolean,
     default: false
+  },
+  player1Socket: {
+    type: String,
+    default: null
+  },
+  player2Socket: {
+    type: String,
+    default: null
   },
   turn: {
     type: String,
@@ -59,7 +67,12 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function Board() {
+function Board1() {
+  let x = getRandomInt(0, 2);
+  array = initial[x];
+  return array;
+}
+function Board2() {
   let x = getRandomInt(0, 2);
   array = initial[x];
   return array;
