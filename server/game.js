@@ -77,9 +77,8 @@ async function playerReady(player_id, room_id, callback) {
   if ((room.player1Ready == room.player2Ready) == true) {
     room.status = "running";
     room.turn = "player1";
-    flag_both_ready = true;
-    callback(1);
     await room.save();
+    callback(1);
   } else {
     callback(0);
   }
