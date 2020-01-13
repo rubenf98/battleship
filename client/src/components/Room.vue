@@ -281,8 +281,6 @@ function createBoards() {
 
 function boardFill(player, boatsPos) {
   let player_id = player.substr(player.length - 1);
-  console.log(player_id);
-  console.log(boatsPos);
   boatsPos.forEach(element => {
     let div = document.getElementById(`${player_id}-${element}`);
     div.style.backgroundColor = "grey";

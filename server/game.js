@@ -13,9 +13,10 @@ io.on("connection", (socket) => {
     const decoded = jwt.verify(data.token, config.get("myprivatekey"));
     console.log(socket.id);
     updateSocketID(data.id_room, decoded._id, socket.id);
-    playerReady(decoded._id, data.id_room, (res) => {
-      if (res == 1) {
+    playerReady(decoded._id, data.id_room, (call) => {
+      if (call == 1) {
         defineBoard(data.id_room, (indices1, indices2, socket1, socket2) => {
+          console.log("tabuleiro:" + indices1);
           io.to(socket1).emit("both-ready", {
             boats: indices1,
             player: "player1"
@@ -77,7 +78,6 @@ async function defineBoard(room_id, callback) {
     indices1.push(boatsPos1);
     boatsPos1 = room.player1Board.indexOf("boat", boatsPos1 + 1);
   }
-  console.log(indices1);
 
   //GET ALL BOATS PLAYER 2
   let boatsPos2 = room.player2Board.indexOf("boat");
@@ -85,7 +85,6 @@ async function defineBoard(room_id, callback) {
     indices2.push(boatsPos2);
     boatsPos2 = room.player2Board.indexOf("boat", boatsPos2 + 1);
   }
-  console.log(indices2);
   callback(indices1, indices2, socket1, socket2);
 }
 
