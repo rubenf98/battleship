@@ -3,6 +3,12 @@
     <Back />
 
     <div class="room-container">
+      <div class="result-win-container result-container">
+        <img src="/win.png" alt />
+      </div>
+      <div class="result-lose-container result-container">
+        <img src="/lose.png" alt />
+      </div>
       <div v-if="share" class="link-share-container responsive-top-margin">
         <label class="link-share-label" for="link_share">Copy link and share it!</label>
         <input
@@ -64,6 +70,20 @@
 .responsive-margin {
   margin-top: 5%;
 }
+
+.room-container .result-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.288);
+  position: absolute;
+  display: none;
+  justify-content: center;
+}
+
+.room-container .result-container img {
+  z-index: 10;
+}
+
 .room-container .chat-container {
   width: 30%;
   display: block;
@@ -281,6 +301,8 @@ import io from "socket.io-client";
 var socket = io("http://localhost:3000");
 import Back from "./layout/Back.vue";
 var audio = new Audio("/sounds/song.mp3");
+var hit_audio = new Audio("/sounds/hit.mp3");
+var fail_audio = new Audio("/sounds/miss.mp3");
 
 export default {
   name: "Room",
@@ -318,7 +340,7 @@ export default {
       });
 
     createBoards();
-    audio.play();
+    //audio.play();
   },
   beforeRouteLeave(to, from, next) {
     if (
@@ -417,39 +439,104 @@ function createBoards() {
   }
   let display_boards = document.getElementById("boards");
   display_boards.style.display = "flex";
-
   socket.on("message", data => {
     console.log(data);
   });
 }
 
-function boardFill(player, boatsPos) {
-  let player_id = player.substr(player.length - 1);
-  boatsPos.forEach(element => {
-    let div = document.getElementById(`${player_id}-${element}`);
-    div.style.backgroundColor = "grey";
-  });
+function boardFill(data) {
+  let player_id = data.player.substr(data.player.length - 1);
+  var enemyPlayer_id;
+  if (player_id == 1) {
+    enemyPlayer_id = 2;
+  } else {
+    enemyPlayer_id = 1;
+  }
+  for (let x = 0; x < data.myBoard.length; x++) {
+    let div = document.getElementById(`${player_id}-${x}`);
+    if (data.myBoard[x] == "boat") {
+      div.style.backgroundColor = "grey";
+    } else if (data.myBoard[x] == "fail") {
+      div.classList.add("fail");
+      div.removeEventListener("click", clickPiece, false);
+    } else if (data.myBoard[x] == "hit") {
+      div.style.backgroundColor = "grey";
+      div.classList.add("hit");
+      div.removeEventListener("click", clickPiece, false);
+    }
+  }
+  for (let x = 0; x < data.enemyBoard.length; x++) {
+    let div = document.getElementById(`${enemyPlayer_id}-${x}`);
+    if (data.enemyBoard[x] == "boat") {
+      div.style.backgroundColor = "grey";
+    } else if (data.enemyBoard[x] == "fail") {
+      div.classList.add("fail");
+      div.removeEventListener("click", clickPiece, false);
+    } else if (data.enemyBoard[x] == "hit") {
+      div.style.backgroundColor = "grey";
+      div.classList.add("hit");
+      div.removeEventListener("click", clickPiece, false);
+    }
+  }
 }
 
-//SOCKET IO
+// SOCKET IO
+
+// PLAY COMUNICATION
 socket.on("click-response", data => {
   let piece = document.getElementById(`${data.piece_id}`);
   //let enemyPlayer = data.piece_id.split("-");
   //enemyPlayer = enemyPlayer[0];
   if (data.result == "hit") {
+    hit_audio.currentTime = 0;
+    hit_audio.play();
     piece.classList.add("hit");
+    piece.style.backgroundColor = "grey";
     piece.removeEventListener("click", clickPiece, false);
   } else {
+    fail_audio.currentTime = 0;
+    fail_audio.play();
     piece.classList.add("fail");
     piece.removeEventListener("click", clickPiece, false);
   }
 });
+
+socket.on("enemy_play", data => {
+  let piece = document.getElementById(`${data.piece_id}`);
+  if (data.result == "hit") {
+    hit_audio.currentTime = 0;
+    hit_audio.play();
+    piece.classList.add("hit");
+    piece.style.backgroundColor = "grey";
+    piece.removeEventListener("click", clickPiece, false);
+  } else {
+    fail_audio.currentTime = 0;
+    fail_audio.play();
+    console.log("fail!!!");
+    piece.classList.add("fail");
+    piece.removeEventListener("click", clickPiece, false);
+  }
+});
+
+// GAME RESULT
 socket.on("winner-message", () => {
+  let message = document.getElementById("wait-message");
+  message.innerHTML = "You Win!!";
   console.log("WINNER!!!!!!!!");
+  let winner_message = document.getElementsByClassName("result-win-container");
+  winner_message = winner_message[0];
+  winner_message.style.display = "flex";
 });
 socket.on("loser-message", () => {
+  let message = document.getElementById("wait-message");
+  message.innerHTML = "You Lose!!";
   console.log("LOSER!!!!!!!!");
+  let winner_message = document.getElementsByClassName("result-lose-container");
+  winner_message = winner_message[0];
+  winner_message.style.display = "flex";
 });
+
+// BEFORE GAME START
 socket.on("not-your-turn", () => {
   alert("Wait for your turn");
 });
@@ -459,8 +546,7 @@ socket.on("both-players-not-ready", () => {
 socket.on("both-ready", data => {
   addEventListenerOnBoard(data.player);
   let message = document.getElementById("wait-message");
-  boardFill(data.player, data.boats);
-
+  boardFill(data);
   message.innerHTML = "Playing...";
 });
 </script>

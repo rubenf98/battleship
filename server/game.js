@@ -14,13 +14,15 @@ io.on("connection", (socket) => {
     updateSocketID(data.id_room, decoded._id, socket.id);
     playerReady(decoded._id, data.id_room, (call) => {
       if (call == 1) {
-        defineBoard(data.id_room, (indices1, indices2, socket1, socket2) => {
-          io.to(socket1).emit("both-ready", {
-            boats: indices1,
+        defineBoard(data.id_room, (p1_send, p2_send) => {
+          io.to(p1_send.socket).emit("both-ready", {
+            myBoard: p1_send.myBoard,
+            enemyBoard: p1_send.enemyBoard,
             player: "player1"
           });
-          io.to(socket2).emit("both-ready", {
-            boats: indices2,
+          io.to(p2_send.socket).emit("both-ready", {
+            myBoard: p2_send.myBoard,
+            enemyBoard: p2_send.enemyBoard,
             player: "player2"
           });
         });
@@ -31,18 +33,21 @@ io.on("connection", (socket) => {
   socket.on("click-piece", (data) => {
     getGameStatus(data, (status) => {
       if (status == "running") {
-        verifyclick(data, (res) => {
-          if (res === "erro") {
+        verifyclick(data, (res, enemy_socket) => {
+          if (res == "erro") {
             socket.emit("not-your-turn");
           } else {
             socket.emit("click-response", {
               result: res,
               piece_id: data.piece_id
             });
+            io.to(enemy_socket).emit("enemy_play", {
+              result: res,
+              piece_id: data.piece_id
+            });
+
             if (res == "hit") {
               verifyWinner(data, (result, enemy_player, socket1, socket2) => {
-                console.log(result);
-                console.log(enemy_player);
                 if (result == -1) {
                   if (enemy_player == 1) {
                     io.to(socket2).emit("winner-message");
@@ -82,26 +87,45 @@ async function updateSocketID(room_id, player_id, socket) {
 
 async function defineBoard(room_id, callback) {
   let room = await Room.findOne({ _id: room_id });
+  //SOCKETS
   let socket1 = room.player1Socket;
   let socket2 = room.player2Socket;
-  //Indices will hold the positions of boats
-  var indices1 = [];
-  var indices2 = [];
+  //GET BOARDS
+  let boardP1 = room.player1Board;
+  let boardP2 = room.player2Board;
 
-  //GET ALL BOATS PLAYER 1
-  let boatsPos1 = room.player1Board.indexOf("boat");
-  while (boatsPos1 != -1) {
-    indices1.push(boatsPos1);
-    boatsPos1 = room.player1Board.indexOf("boat", boatsPos1 + 1);
+  // Remove boats from boards in order to send to oppenent
+  let boardP1Send = boardP1;
+  let boardP2Send = boardP2;
+  var idx1 = boardP1Send.indexOf("boat");
+  while (idx1 != -1) {
+    boardP1Send[idx1] = "empty";
+    idx1 = boardP1Send.indexOf("boat");
+  }
+  var idx2 = boardP2Send.indexOf("boat");
+  while (idx2 != -1) {
+    boardP2Send[idx2] = "empty";
+    idx2 = boardP2Send.indexOf("boat");
   }
 
-  //GET ALL BOATS PLAYER 2
-  let boatsPos2 = room.player2Board.indexOf("boat");
-  while (boatsPos2 != -1) {
-    indices2.push(boatsPos2);
-    boatsPos2 = room.player2Board.indexOf("boat", boatsPos2 + 1);
-  }
-  callback(indices1, indices2, socket1, socket2);
+  room = await Room.findOne({ _id: room_id });
+  boardP1 = room.player1Board;
+  boardP2 = room.player2Board;
+
+  var data_send_p1 = {
+    socket: socket1,
+    myBoard: boardP1,
+    enemyBoard: boardP2Send
+  };
+  var data_send_p2 = {
+    socket: socket2,
+    myBoard: boardP2,
+    enemyBoard: boardP1Send
+  };
+
+  /* preciso enviar para cada player: 
+  socket, o seu tabuleiro inteiro e o tabuleiro inimigo só com hit e fails  */
+  callback(data_send_p1, data_send_p2);
 }
 
 async function playerReady(player_id, room_id, callback) {
@@ -129,14 +153,9 @@ async function verifyclick(data, callback) {
   let playerN = room.player1 == decoded._id ? "player1" : "player2";
   let playerNext = room.player1 != decoded._id ? "player1" : "player2";
   if (room.turn === playerN) {
-    /* data{
-            room_id: '5e1ce40fd08d0008f59e395b',
-            piece_id: '2-52',
-            token: (...)
-    }*/
     splitPiece_id = data.piece_id.split("-");
-    identifyEnemyPlayer = splitPiece_id[0];
-    identifyEnemyPiece = splitPiece_id[1];
+    var identifyEnemyPlayer = splitPiece_id[0];
+    var identifyEnemyPiece = splitPiece_id[1];
     if (identifyEnemyPlayer == 1) {
       let hit_value = room.player1Board[identifyEnemyPiece];
       console.log(hit_value);
@@ -147,7 +166,7 @@ async function verifyclick(data, callback) {
         console.log(incObject);
         //
         Room.updateOne({ _id: room._id }, incObject, function(err, res) {
-          callback("hit");
+          callback("hit", room.player1Socket);
         });
       } else {
         room.turn = playerNext;
@@ -157,7 +176,7 @@ async function verifyclick(data, callback) {
         incObject["player1Board." + identifyEnemyPiece + ""] = "fail";
         //
         Room.updateOne({ _id: room._id }, incObject, function(err, res) {
-          callback("fail");
+          callback("fail", room.player1Socket);
         });
       }
     }
@@ -170,7 +189,7 @@ async function verifyclick(data, callback) {
         console.log(incObject);
         //
         Room.updateOne({ _id: room._id }, incObject, function(err, res) {
-          callback("hit");
+          callback("hit", room.player2Socket);
         });
       } else {
         room.turn = playerNext;
@@ -181,7 +200,7 @@ async function verifyclick(data, callback) {
         console.log(incObject);
         //
         Room.updateOne({ _id: room._id }, incObject, function(err, res) {
-          callback("fail");
+          callback("fail", room.player2Socket);
         });
       }
     }
@@ -206,9 +225,21 @@ async function verifyWinner(data, callback) {
   } else if (identifyEnemyPlayer == 2) {
     board = room.player2Board;
   }
-  win_result = board.indexOf("boat");
+  var win_result = board.indexOf("boat");
   var socket1 = room.player1Socket;
   var socket2 = room.player2Socket;
+
+  if (win_result == -1) {
+    if (identifyEnemyPlayer == 1) {
+      room.status = "finished";
+      room.winner = "player2";
+      room.save();
+    } else if (identifyEnemyPlayer == 2) {
+      room.status = "finished";
+      room.winner = "player1";
+      room.save();
+    }
+  }
   callback(win_result, identifyEnemyPlayer, socket1, socket2);
 }
 
