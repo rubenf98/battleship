@@ -39,6 +39,21 @@ io.on("connection", (socket) => {
               result: res,
               piece_id: data.piece_id
             });
+            if (res == "hit") {
+              verifyWinner(data, (result, enemy_player, socket1, socket2) => {
+                console.log(result);
+                console.log(enemy_player);
+                if (result == -1) {
+                  if (enemy_player == 1) {
+                    io.to(socket2).emit("winner-message");
+                    io.to(socket1).emit("loser-message");
+                  } else if (enemy_player == 2) {
+                    io.to(socket1).emit("winner-message");
+                    io.to(socket2).emit("loser-message");
+                  }
+                }
+              });
+            }
           }
         });
       } else {
@@ -175,6 +190,26 @@ async function verifyclick(data, callback) {
     await room.save();
     callback("erro");
   }
+}
+
+async function verifyWinner(data, callback) {
+  /* 
+  data.room_id
+  data.piece_id
+   */
+  let identifyEnemyPlayer = data.piece_id.split("-");
+  identifyEnemyPlayer = identifyEnemyPlayer[0];
+  const room = await Room.findById(data.room_id);
+  var board;
+  if (identifyEnemyPlayer == 1) {
+    board = room.player1Board;
+  } else if (identifyEnemyPlayer == 2) {
+    board = room.player2Board;
+  }
+  win_result = board.indexOf("boat");
+  var socket1 = room.player1Socket;
+  var socket2 = room.player2Socket;
+  callback(win_result, identifyEnemyPlayer, socket1, socket2);
 }
 
 // io.on("connection", (socket) => {

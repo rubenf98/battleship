@@ -350,7 +350,12 @@ socket.on("click-response", data => {
     piece.classList.add("fail");
     piece.removeEventListener("click", clickPiece, false);
   }
-  //READ DATA!
+});
+socket.on("winner-message", () => {
+  console.log("WINNER!!!!!!!!");
+});
+socket.on("loser-message", () => {
+  console.log("LOSER!!!!!!!!");
 });
 socket.on("not-your-turn", () => {
   alert("Wait for your turn");
