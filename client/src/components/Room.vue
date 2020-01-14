@@ -371,19 +371,24 @@ export default {
   }
 };
 
-function addEventListenerOnBoard() {
+function addEventListenerOnBoard(player) {
   var classPiece1 = document.getElementsByClassName("piece1");
   var classPiece2 = document.getElementsByClassName("piece2");
 
-  for (let x = 0; x < classPiece1.length; x++) {
-    classPiece1[x].addEventListener("click", clickPiece, false);
+  if (player == "player2") {
+    for (let x = 0; x < classPiece1.length; x++) {
+      classPiece1[x].addEventListener("click", clickPiece, false);
+    }
   }
-  for (let x = 0; x < classPiece2.length; x++) {
-    classPiece2[x].addEventListener("click", clickPiece, false);
+  if (player == "player1") {
+    for (let x = 0; x < classPiece2.length; x++) {
+      classPiece2[x].addEventListener("click", clickPiece, false);
+    }
   }
 }
 
 function clickPiece() {
+  console.log("clicou");
   var pathname = window.location.pathname.split("/");
   var room_id = pathname[2];
   socket.emit("click-piece", {
@@ -408,13 +413,10 @@ function createBoards() {
     let element2 = document.createElement("div");
     element2.id = `2-${x}`;
     board2.appendChild(element2);
-
     element2.classList.add("piece2");
   }
   let display_boards = document.getElementById("boards");
   display_boards.style.display = "flex";
-
-  addEventListenerOnBoard();
 
   socket.on("message", data => {
     console.log(data);
@@ -431,7 +433,16 @@ function boardFill(player, boatsPos) {
 
 //SOCKET IO
 socket.on("click-response", data => {
-  console.log(data);
+  let piece = document.getElementById(`${data.piece_id}`);
+  //let enemyPlayer = data.piece_id.split("-");
+  //enemyPlayer = enemyPlayer[0];
+  if (data.result == "hit") {
+    piece.classList.add("hit");
+    piece.removeEventListener("click", clickPiece, false);
+  } else {
+    piece.classList.add("fail");
+    piece.removeEventListener("click", clickPiece, false);
+  }
   //READ DATA!
 });
 socket.on("not-your-turn", () => {
@@ -441,8 +452,10 @@ socket.on("both-players-not-ready", () => {
   alert("You need to press start and wait for the other player");
 });
 socket.on("both-ready", data => {
+  addEventListenerOnBoard(data.player);
   let message = document.getElementById("wait-message");
-  message.innerHTML = "Playing";
   boardFill(data.player, data.boats);
+
+  message.innerHTML = "Playing...";
 });
 </script>
