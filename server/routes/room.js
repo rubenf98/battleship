@@ -44,7 +44,7 @@ router.get("/room/history", auth, async (req, res) => {
       $and: [{ status: "finished" }]
     },
     "player1 player2 winner",
-    function(err, rooms) {
+    function (err, rooms) {
       if (!err) {
         if (!rooms)
           return res.status(404).send("you have not finished a game yet");
@@ -65,7 +65,7 @@ router.get("/room/private", auth, async (req, res) => {
       $and: [{ status: "running" }]
     },
     "player1 player2 type status",
-    function(err, rooms) {
+    function (err, rooms) {
       if (!err) {
         if (!rooms) return res.status(404).send("you have no current rooms");
         res.send(rooms);
@@ -114,8 +114,11 @@ router.get("/room/:room", auth, async (req, res) => {
       (room.player1 == user._id || room.player2 == user._id) &&
       room.status != "finished"
     ) {
-      res.send(room);
-    } else res.status(400).send("you can't access this room");
+      console.log(room);
+      res.status(200).send(room);
+    } else {
+      res.status(400).send("you can't access this room");
+    }
   });
 });
 
@@ -135,7 +138,7 @@ router.post("/room", auth, games, async (req, res) => {
     winner: null
   });
 
-  room.save(function(err) {
+  room.save(function (err) {
     if (err) res.send("erro");
     else res.send(room);
   });
@@ -150,7 +153,7 @@ router.delete("/room/:room", auth, async (req, res) => {
   if (!room) return res.status(404).send("room not found");
 
   if (room.player1 == user._id && room.player2 == null) {
-    Room.deleteOne({ _id: room._id }, function(err) {
+    Room.deleteOne({ _id: room._id }, function (err) {
       if (err) res.status(200).send("room deleted");
       else res.status(403).send("room can't be deleted");
     });

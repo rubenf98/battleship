@@ -1,7 +1,7 @@
 <template>
   <div>
     <Back />
-    <div class="rank-container">
+    <div v-if="user" class="rank-container">
       <div class="table-container">
         <h1>Game history</h1>
         <hr />
@@ -16,7 +16,7 @@
             <tr v-for="(room, index) in rooms" :key="room._id">
               <td>{{index + 1}}</td>
               <td>{{user._id == room.player1 ? room.player2 : room.player1}}</td>
-              <td>{{user._id == room.winner ? "winner" : "loser"}}</td>
+              <td>{{user._id == room.player1 ? ("player1" == room.winner ? "win" : "lose") : ("player2" == room.winner ? "win" : "lose")}}</td>
             </tr>
           </tbody>
         </table>
@@ -48,6 +48,7 @@ export default {
         headers: { "x-access-token": localStorage.token }
       })
       .then(res => {
+        console.log("rooms : " + res.data[0].winner);
         this.rooms = res.data;
       });
     axios
@@ -55,6 +56,7 @@ export default {
         headers: { "x-access-token": localStorage.token }
       })
       .then(res => {
+        console.log("user : " + res.data);
         this.user = res.data;
       });
   }

@@ -1,7 +1,7 @@
 <template>
   <div>
     <Back />
-    <div class="rank-container">
+    <div v-if="user" class="rank-container">
       <div class="table-container">
         <h1>Current games</h1>
         <hr />
