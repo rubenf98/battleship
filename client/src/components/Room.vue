@@ -324,7 +324,6 @@ export default {
   },
   data() {
     return {
-      user: null,
       current_room: null,
       share: null,
       player1: false
@@ -343,7 +342,6 @@ export default {
         headers: { "x-access-token": localStorage.token }
       })
       .then(res => {
-        console.log(res.data);
         me = res.data;
       });
     axios
@@ -355,19 +353,18 @@ export default {
         if (res.data.type == "private" && res.data.status == "pending") {
           this.share = "http://localhost:8080/room/join/" + res.data._id;
         }
-        console.log("here");
         if (res.data.player1 == me._id) {
-          console.log("player1: " + res.data.player1);
-          console.log("user: " + me._id);
           this.player1 = true;
         }
         console.log("is it me: " + this.player1);
       })
-      .catch(function(e) {
-        vm.$router.push({
-          name: "menu",
-          params: { feedback: e.response.data }
-        });
+      .catch(e => {
+        if (e.response) {
+          vm.$router.push({
+            name: "menu",
+            params: { feedback: e.response.data }
+          });
+        }
       });
 
     createBoards();
