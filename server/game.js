@@ -35,7 +35,10 @@ io.on("connection", (socket) => {
           if (res === "erro") {
             socket.emit("not-your-turn");
           } else {
-            socket.emit("click-response", res);
+            socket.emit("click-response", {
+              result: res,
+              piece_id: data.piece_id
+            });
           }
         });
       } else {
@@ -121,30 +124,52 @@ async function verifyclick(data, callback) {
     identifyEnemyPiece = splitPiece_id[1];
     if (identifyEnemyPlayer == 1) {
       let hit_value = room.player1Board[identifyEnemyPiece];
+      console.log(hit_value);
       if (hit_value == "boat") {
-        room.player1Board[identifyEnemyPiece] = "hit";
-        await room.save();
-        callback("hit");
+        // DON´T TOUCH 1h14min, 14 JAN 2020
+        var incObject = {};
+        incObject["player1Board." + identifyEnemyPiece + ""] = "hit";
+        console.log(incObject);
+        //
+        Room.updateOne({ _id: room._id }, incObject, function(err, res) {
+          callback("hit");
+        });
       } else {
         room.turn = playerNext;
         await room.save();
-        callback("fail");
+        // DON´T TOUCH 1h14min, 14 JAN 2020
+        var incObject = {};
+        incObject["player1Board." + identifyEnemyPiece + ""] = "fail";
+        //
+        Room.updateOne({ _id: room._id }, incObject, function(err, res) {
+          callback("fail");
+        });
       }
     }
     if (identifyEnemyPlayer == 2) {
       let hit_value = room.player2Board[identifyEnemyPiece];
       if (hit_value == "boat") {
-        room.player2Board[identifyEnemyPiece] = "hit";
-        await room.save();
-        callback("hit");
+        // DON´T TOUCH 1h14min, 14 JAN 2020
+        var incObject = {};
+        incObject["player2Board." + identifyEnemyPiece + ""] = "hit";
+        console.log(incObject);
+        //
+        Room.updateOne({ _id: room._id }, incObject, function(err, res) {
+          callback("hit");
+        });
       } else {
         room.turn = playerNext;
         await room.save();
-        callback("fail");
+        // DON´T TOUCH 1h14min, 14 JAN 2020
+        var incObject = {};
+        incObject["player2Board." + identifyEnemyPiece + ""] = "fail";
+        console.log(incObject);
+        //
+        Room.updateOne({ _id: room._id }, incObject, function(err, res) {
+          callback("fail");
+        });
       }
     }
-
-    callback(1);
   } else {
     //NOT YOUR TURN
     await room.save();
