@@ -15,11 +15,28 @@
       </div>
       <div v-if="!share" class="responsive-margin responsive-top-margin"></div>
       <div id="boards">
-        <div class="board" id="board1"></div>
+        <div class="board-header">
+          <div v-if="player1" class="board-header">
+            <h1 class="board-title">You</h1>
+          </div>
+          <div v-if="!player1">
+            <h1 class="board-title">Opponent</h1>
+          </div>
+          <div class="board" id="board1"></div>
+        </div>
+
         <div class="split-container">
           <img src="/vs.png" alt />
         </div>
-        <div class="board" id="board2"></div>
+        <div class="board-header">
+          <div v-if="player1" class="board-header">
+            <h1 class="board-title">Opponent</h1>
+          </div>
+          <div v-if="!player1">
+            <h1 class="board-title">You</h1>
+          </div>
+          <div class="board" id="board2"></div>
+        </div>
       </div>
       <div id="button-container">
         <img id="play-btn" v-on:click="startGame" src="/play-btn.png" alt />
@@ -29,31 +46,14 @@
         <div class="messages_form">
           <input
             class="chat-message"
-            id="message"
+            id="message-input"
             type="text"
-            placeholder="Send a message to your opponent!"
+            placeholder="Wait for your opponent..."
+            disabled
           />
-          <img class="chat-btn" src="/icons/send.svg" alt />
+          <img id="chat-btn" class="chat-btn" src="/icons/send-disabled.svg" alt />
         </div>
-        <div class="message-container">
-          <div class="message self-message">Lorem ipsum dolor sit amet coone perferen</div>
-          <div class="message other-message">Lorem ipsum dolor sit amet consectetur adipisien</div>
-          <div class="message self-message">Lor</div>
-          <div class="message other-message">Loremrferen</div>
-          <div
-            class="message self-message"
-          >Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione peren</div>
-          <div class="message self-message">Lorem ipsum dolor sit amet consedipisione perferen</div>
-          <div
-            class="message other-message"
-          >Lorem ipsum dolor sit amet consectetur adipisicing elite perferen</div>
-          <div class="message other-message">Lorem ippisicing elit. Ratione perferen</div>
-          <div class="message self-message">Lorem ipsum dolor sit amet consectetur adipi perferen</div>
-          <div
-            class="message other-message"
-          >Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione perferen</div>
-          <div class="message self-message">Lorem ipsum dolor sig elit. Ratione perferen</div>
-        </div>
+        <div id="message-container" class="message-container"></div>
       </div>
     </div>
   </div>
@@ -67,7 +67,7 @@
 .room-container .chat-container {
   width: 30%;
   display: block;
-  margin: auto;
+  margin: 0 auto;
 }
 .room-container .messages_form {
   position: relative;
@@ -81,6 +81,7 @@
   margin: auto;
   cursor: pointer;
 }
+
 .room-container .chat-message {
   width: 100%;
   background-color: rgba(0, 0, 0, 0.452);
@@ -110,10 +111,10 @@
   display: none;
 }
 .room-container .self-message {
-  text-align: left;
+  text-align: right;
 }
 .room-container .other-message {
-  text-align: right;
+  text-align: left;
 }
 .room-container {
   position: absolute;
@@ -136,12 +137,22 @@
   justify-content: center;
   flex-wrap: wrap;
 }
+.room-container .board-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  text-align: center;
+  margin: 0 1%;
+}
+
+.room-container .board-title {
+  color: white;
+}
 .room-container .board {
   display: grid;
   grid-template-columns: repeat(10, 40px);
   grid-template-rows: repeat(10, 40px);
   justify-content: center;
-  margin: 0 1%;
 }
 
 .room-container .piece1 {
@@ -281,6 +292,8 @@ import io from "socket.io-client";
 var socket = io("http://localhost:3000");
 import Back from "./layout/Back.vue";
 var audio = new Audio("/sounds/song.mp3");
+import JQuery from "jquery";
+let $ = JQuery;
 
 export default {
   name: "Room",
@@ -289,8 +302,10 @@ export default {
   },
   data() {
     return {
+      user: null,
       current_room: null,
-      share: null
+      share: null,
+      player1: false
     };
   },
   components: {
@@ -300,6 +315,15 @@ export default {
     const vm = this;
     var pathname = window.location.pathname.split("/");
     var room_id = pathname[2];
+    var me = null;
+    axios
+      .get("http://localhost:8000/api/user/current", {
+        headers: { "x-access-token": localStorage.token }
+      })
+      .then(res => {
+        console.log(res.data);
+        me = res.data;
+      });
     axios
       .get("http://localhost:8000/api/room/" + room_id, {
         headers: { "x-access-token": localStorage.token }
@@ -309,6 +333,13 @@ export default {
         if (res.data.type == "private" && res.data.status == "pending") {
           this.share = "http://localhost:8080/room/join/" + res.data._id;
         }
+        console.log("here");
+        if (res.data.player1 == me._id) {
+          console.log("player1: " + res.data.player1);
+          console.log("user: " + me._id);
+          this.player1 = true;
+        }
+        console.log("is it me: " + this.player1);
       })
       .catch(function(e) {
         vm.$router.push({
@@ -458,9 +489,50 @@ socket.on("both-players-not-ready", () => {
 });
 socket.on("both-ready", data => {
   addEventListenerOnBoard(data.player);
+  addEventListenerOnChat();
+
+  $("#message-input").attr("placeholder", "Send a message to your opponent!");
+  $("#message-input").removeAttr("disabled");
+  $("#chat-btn").attr("src", "/icons/send.svg");
+
   let message = document.getElementById("wait-message");
   boardFill(data.player, data.boats);
 
   message.innerHTML = "Playing...";
 });
+
+function addEventListenerOnChat() {
+  const messageForm = document.getElementById("chat-btn");
+  const messageInput = document.getElementById("message-input");
+  var pathname = window.location.pathname.split("/");
+  var room_id = pathname[2];
+
+  messageForm.addEventListener("click", e => {
+    // não deixa a pagina realizar refresh quando faz submit
+    e.preventDefault();
+    if (messageInput.value != "") {
+      const message = messageInput.value;
+      appendMessage(message, "self-message");
+      socket.emit("send-chat-message", {
+        token: localStorage.token.toString(),
+        id_room: room_id,
+        message: message
+      });
+      messageInput.value = "";
+    }
+  });
+}
+
+socket.on("chat-message", data => {
+  appendMessage(data.message, "other-message");
+});
+
+function appendMessage(message, message_class) {
+  const messageContainer = document.getElementById("message-container");
+  const messageElement = document.createElement("div");
+  messageElement.innerText = message;
+  messageElement.classList.add("message");
+  messageElement.classList.add(message_class);
+  messageContainer.prepend(messageElement);
+}
 </script>
