@@ -68,12 +68,12 @@ function getRandomInt(min, max) {
 }
 
 function Board1() {
-  let x = getRandomInt(0, 2);
+  let x = getRandomInt(0, 9);
   array1 = initial[x];
   return array1;
 }
 function Board2() {
-  let y = getRandomInt(0, 2);
+  let y = getRandomInt(0, 9);
   array2 = initial[y];
   return array2;
 }
