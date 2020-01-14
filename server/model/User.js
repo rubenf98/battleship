@@ -51,14 +51,18 @@ Schema.methods.resetCounter = function (user) {
     return true;
 }
 
-Schema.methods.updatePoints = function (result, user) {
-    if (result == "reset") user.points = 0;
-
+Schema.methods.updatePoints = async function (result, user) {
+    if (result == "reset") {
+        user.points = 0;
+        await user.save();
+    }
     //Only ranked players can gain/lose points
     if (user.league != "unranked") {
 
-        if (result == "victory")
+        if (result == "victory") {
             user.points += 4;
+            await user.save();
+        }
 
         else if (result == "defeat") {
 
@@ -66,11 +70,18 @@ Schema.methods.updatePoints = function (result, user) {
             //and have not won yet can get negative points
             if (user.counter > 2 && user.points != 0) {
                 user.points = 0;
+                await user.save();
             }
             else {
                 //Bronze players can't have negative points
-                if (user.league == "bronze" && user.points < 2) user.points = 0;
-                else user.points -= 2;
+                if (user.league == "bronze" && user.points < 2) {
+                    user.points = 0;
+                    await user.save();
+                }
+                else {
+                    user.points -= 2;
+                    await user.save();
+                }
             }
         }
 
@@ -78,42 +89,52 @@ Schema.methods.updatePoints = function (result, user) {
         user.counter++;
     }
     //Increment counter of unranked games
-    else user.counter++;
-
-    user.save();
+    else {
+        user.counter++;
+        await user.save();
+    }
     return user.points;
 }
 
-Schema.methods.updateLeague = function (user) {
+Schema.methods.updateLeague = async function (user) {
     if (user.league != "unranked") {
         if (user.points > 20) {
-            user.resetCounter(user);
+            await user.resetCounter(user);
             if (user.league != "diamond") user.updatePoints("reset", user);
             switch (user.league) {
                 case "bronze":
                     user.league = "silver";
+                    await user.save();
                     break;
                 case "silver":
                     user.league = "gold";
+                    await user.save();
                     break;
                 case "gold":
                     user.league = "diamond";
+                    await user.save();
                     break;
-                default: user.league = "diamond";
+                default:
+                    user.league = "diamond";
+                    await user.save();
                     break;
             }
         }
         else if (user.points < 0 && user.counter >= 2) {
-            user.resetCounter(user);
-            user.updatePoints("reset", user);
+            await user.resetCounter(user);
+            await user.updatePoints("reset", user);
             switch (user.league) {
                 case "diamond":
                     user.league = "gold";
+                    await user.save();
                     break;
                 case "gold":
                     user.league = "silver";
+                    await user.save();
                     break;
-                default: user.league = "bronze";
+                default:
+                    user.league = "bronze";
+                    await user.save();
                     break;
             }
         }

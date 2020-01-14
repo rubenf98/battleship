@@ -137,7 +137,7 @@ router.post("/room", auth, games, async (req, res) => {
 
   room.save(function(err) {
     if (err) res.send("erro");
-    res.send(room);
+    else res.send(room);
   });
 });
 

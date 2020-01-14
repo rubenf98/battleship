@@ -47,11 +47,13 @@ io.on("connection", (socket) => {
             });
 
             if (res == "hit") {
-              verifyWinner(data, (result, enemy_player, socket1, socket2) => {
+              verifyWinner(data, (result, enemy_player, socket1, socket2, room) => {
                 if (result == -1) {
+                  updateRank(room, enemy_player);
                   if (enemy_player == 1) {
                     io.to(socket2).emit("winner-message");
                     io.to(socket1).emit("loser-message");
+
                   } else if (enemy_player == 2) {
                     io.to(socket1).emit("winner-message");
                     io.to(socket2).emit("loser-message");
@@ -187,7 +189,7 @@ async function verifyclick(data, callback) {
         incObject["player1Board." + identifyEnemyPiece + ""] = "hit";
         console.log(incObject);
         //
-        Room.updateOne({ _id: room._id }, incObject, function(err, res) {
+        Room.updateOne({ _id: room._id }, incObject, function (err, res) {
           callback("hit", room.player1Socket);
         });
       } else {
@@ -197,7 +199,7 @@ async function verifyclick(data, callback) {
         var incObject = {};
         incObject["player1Board." + identifyEnemyPiece + ""] = "fail";
         //
-        Room.updateOne({ _id: room._id }, incObject, function(err, res) {
+        Room.updateOne({ _id: room._id }, incObject, function (err, res) {
           callback("fail", room.player1Socket);
         });
       }
@@ -210,7 +212,7 @@ async function verifyclick(data, callback) {
         incObject["player2Board." + identifyEnemyPiece + ""] = "hit";
         console.log(incObject);
         //
-        Room.updateOne({ _id: room._id }, incObject, function(err, res) {
+        Room.updateOne({ _id: room._id }, incObject, function (err, res) {
           callback("hit", room.player2Socket);
         });
       } else {
@@ -221,7 +223,7 @@ async function verifyclick(data, callback) {
         incObject["player2Board." + identifyEnemyPiece + ""] = "fail";
         console.log(incObject);
         //
-        Room.updateOne({ _id: room._id }, incObject, function(err, res) {
+        Room.updateOne({ _id: room._id }, incObject, function (err, res) {
           callback("fail", room.player2Socket);
         });
       }
@@ -238,6 +240,7 @@ async function verifyWinner(data, callback) {
   data.room_id
   data.piece_id
    */
+  console.log(data);
   let identifyEnemyPlayer = data.piece_id.split("-");
   identifyEnemyPlayer = identifyEnemyPlayer[0];
   const room = await Room.findById(data.room_id);
@@ -262,7 +265,30 @@ async function verifyWinner(data, callback) {
       room.save();
     }
   }
-  callback(win_result, identifyEnemyPlayer, socket1, socket2);
+  callback(win_result, identifyEnemyPlayer, socket1, socket2, room);
 }
 
+async function updateRank(room, current_player, callback) {
+  console.log("here")
+  let player2 = await User.findById(room.player2);
+  let player1 = await User.findById(room.player1);
+
+  if (current_player == 1) {
+    await player2.updatePoints("victory", player2);
+    await player2.updateLeague(player2);
+
+    await player1.updatePoints("defeat", player1);
+    await player1.updateLeague(player1);
+
+  } else if (current_player == 2) {
+    await player1.updatePoints("victory", player1);
+    await player1.updateLeague(player1);
+
+    await player2.updatePoints("defeat", player2);
+    await player2.updateLeague(player2);
+
+  }
+
+  callback(win_result, identifyEnemyPlayer, socket1, socket2);
+}
 
