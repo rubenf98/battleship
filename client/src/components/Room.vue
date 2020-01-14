@@ -3,17 +3,7 @@
     <Back />
 
     <div class="room-container">
-      <div id="boards">
-        <div class="board responsive-top-margin" id="board1"></div>
-        <div class="split-container">
-          <img src="/vs.png" alt />
-        </div>
-        <div class="board" id="board2"></div>
-      </div>
-      <div id="button-container">
-        <img id="play-btn" v-on:click="startGame" src="/play-btn.png" alt />
-      </div>
-      <div v-if="share" class="link-share-container">
+      <div v-if="share" class="link-share-container responsive-top-margin">
         <label class="link-share-label" for="link_share">Copy link and share it!</label>
         <input
           class="link-share-input"
@@ -23,18 +13,114 @@
           v-model="share"
         />
       </div>
+      <div v-if="!share" class="responsive-margin responsive-top-margin"></div>
+      <div id="boards">
+        <div class="board" id="board1"></div>
+        <div class="split-container">
+          <img src="/vs.png" alt />
+        </div>
+        <div class="board" id="board2"></div>
+      </div>
+      <div id="button-container">
+        <img id="play-btn" v-on:click="startGame" src="/play-btn.png" alt />
+      </div>
+
+      <div class="chat-container">
+        <div class="messages_form">
+          <input
+            class="chat-message"
+            id="message"
+            type="text"
+            placeholder="Send a message to your opponent!"
+          />
+          <img class="chat-btn" src="/icons/send.svg" alt />
+        </div>
+        <div class="message-container">
+          <div class="message self-message">Lorem ipsum dolor sit amet coone perferen</div>
+          <div class="message other-message">Lorem ipsum dolor sit amet consectetur adipisien</div>
+          <div class="message self-message">Lor</div>
+          <div class="message other-message">Loremrferen</div>
+          <div
+            class="message self-message"
+          >Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione peren</div>
+          <div class="message self-message">Lorem ipsum dolor sit amet consedipisione perferen</div>
+          <div
+            class="message other-message"
+          >Lorem ipsum dolor sit amet consectetur adipisicing elite perferen</div>
+          <div class="message other-message">Lorem ippisicing elit. Ratione perferen</div>
+          <div class="message self-message">Lorem ipsum dolor sit amet consectetur adipi perferen</div>
+          <div
+            class="message other-message"
+          >Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione perferen</div>
+          <div class="message self-message">Lorem ipsum dolor sig elit. Ratione perferen</div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
+.responsive-margin {
+  margin-top: 5%;
+}
+.room-container .chat-container {
+  width: 30%;
+  display: block;
+  margin: auto;
+}
+.room-container .messages_form {
+  position: relative;
+}
+.room-container .chat-btn {
+  width: 25px;
+  position: absolute;
+  right: 5px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  cursor: pointer;
+}
+.room-container .chat-message {
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.452);
+  border: none;
+  padding: 10px 0px;
+  padding-left: 10px;
+  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box; /* Firefox, other Gecko */
+  box-sizing: border-box; /* Opera/IE 8+ */
+  color: white;
+}
+.room-container .message {
+  color: white;
+  margin: 10px 0;
+  transition: 0.2s ease;
+}
+.room-container .message:nth-child(5) {
+  color: rgba(255, 255, 255, 0.719);
+}
+.room-container .message:nth-child(6) {
+  color: rgba(255, 255, 255, 0.52);
+}
+.room-container .message:nth-child(7) {
+  color: rgba(255, 255, 255, 0.205);
+}
+.room-container .message-container div:nth-child(n + 8) {
+  display: none;
+}
+.room-container .self-message {
+  text-align: left;
+}
+.room-container .other-message {
+  text-align: right;
+}
 .room-container {
   position: absolute;
   width: 100%;
   height: 100%;
   z-index: -1;
-  background-image: url("/room-wall.gif");
+  background-image: url("/source.gif");
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-position: center;
@@ -45,7 +131,6 @@
 }
 
 .room-container #boards {
-  margin-top: 5%;
   width: 100%;
   display: none;
   justify-content: center;
@@ -56,7 +141,7 @@
   grid-template-columns: repeat(10, 40px);
   grid-template-rows: repeat(10, 40px);
   justify-content: center;
-  margin: 3% 1%;
+  margin: 0 1%;
 }
 
 .room-container .piece1 {
@@ -104,6 +189,7 @@
   display: flex;
   justify-content: center;
   width: 100%;
+  margin-bottom: 3%;
 }
 
 #wait-message {
@@ -117,6 +203,7 @@
 .link-share-container {
   display: flex;
   margin: 3% auto;
+  margin-top: 3%;
   justify-content: center;
   flex-direction: column;
   width: 30%;
@@ -161,6 +248,9 @@
   .link-share-container {
     width: 30%;
   }
+  .room-container .chat-container {
+    width: 60%;
+  }
 }
 @media only screen and (max-width: 500px) {
   .room-container .board {
@@ -178,6 +268,9 @@
   .link-share-input {
     padding: 5px;
     margin: 5% auto;
+  }
+  .room-container .chat-container {
+    width: 90%;
   }
 }
 </style>
