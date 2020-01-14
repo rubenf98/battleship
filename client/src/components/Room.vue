@@ -510,6 +510,7 @@ socket.on("enemy_play", data => {
     piece.style.backgroundColor = "grey";
     piece.removeEventListener("click", clickPiece, false);
   } else {
+    // INDICATE YOUR TURN!!!!!
     fail_audio.currentTime = 0;
     fail_audio.play();
     console.log("fail!!!");
