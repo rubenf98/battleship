@@ -66,7 +66,29 @@ io.on("connection", (socket) => {
       }
     });
   });
+  //Send chat message
+  socket.on("send-chat-message", (data) => {
+    getTarget(data, (target) => {
+      //console.log("message: " + data.message)
+      io.to(target).emit("chat-message", {
+        message: data.message,
+      });
+    });
+  });
 });
+
+async function getTarget(data, callback) {
+  const user = jwt.verify(data.token, config.get("myprivatekey"));
+  const room = await Room.findById(data.id_room);
+  let target;
+  if (user._id == room.player1) {
+    target = room.player2Socket;
+  }
+  else if (user._id == room.player2) {
+    target = room.player1Socket;
+  }
+  callback(target);
+}
 
 async function getGameStatus(data, callback) {
   let room = await Room.findOne({ _id: data.room_id });
@@ -243,18 +265,4 @@ async function verifyWinner(data, callback) {
   callback(win_result, identifyEnemyPlayer, socket1, socket2);
 }
 
-// io.on("connection", (socket) => {
-//   socket.on("new-user", (name) => {
-//     socket.broadcast.emit("user-connected", name);
-//   });
-//   socket.on("send-chat-message", (message) => {
-//     socket.broadcast.emit("chat-message", {
-//       message: message,
-//       name: users[socket.id]
-//     });
-//   });
-//   socket.on("disconnect", () => {
-//     socket.broadcast.emit("user-disconnected", users[socket.id]);
-//     delete users[socket.id];
-//   });
-// });
+

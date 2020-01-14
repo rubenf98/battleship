@@ -51,9 +51,9 @@ const initial4 =
         'empty', 'boat', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty',
         'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty',
         'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty',
-        'empty', 'empty', 'empty', 'empty', 'empty', 'boat', 'empty', 'boat', 'boat', 'boat',
-        'empty', 'empty', 'empty', 'empty', 'empty', 'boat', 'empty', 'empty', 'empty', 'empty',
-        'empty', 'empty', 'empty', 'empty', 'empty', 'boat', 'empty', 'empty', 'empty', 'empty',
+        'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'boat', 'empty', 'empty', 'boat',
+        'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'boat', 'empty', 'empty', 'boat',
+        'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'boat', 'empty', 'empty', 'boat',
         'boat', 'boat', 'boat', 'boat', 'boat', 'empty', 'boat', 'empty', 'empty', 'empty',
         'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty',
     ];
