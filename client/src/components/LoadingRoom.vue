@@ -10,6 +10,7 @@
 
 <script>
 import axios from "axios";
+const { url } = require("../helper");
 
 export default {
   name: "loading",
@@ -23,7 +24,7 @@ export default {
     console.log(this.$route.params.room);
     if (!this.$route.params.room) {
       axios
-        .post("http://localhost:8000/api/room/random", "body", {
+        .post(url + "/api/room/random", "body", {
           headers: { "x-access-token": localStorage.token }
         })
         .then(function(response) {
@@ -43,7 +44,7 @@ export default {
     } else {
       axios
         .post(
-          "http://localhost:8000/api/room/join/" + this.$route.params.room,
+          url + "/api/room/join/" + this.$route.params.room,
           "body",
           {
             headers: { "x-access-token": localStorage.token }

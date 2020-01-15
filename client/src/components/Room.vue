@@ -310,6 +310,8 @@
 <script>
 import axios from "axios";
 import Back from "./layout/Back.vue";
+const { url, socket_url, share_url } = require("../helper");
+
 var audio = new Audio("/sounds/song.mp3");
 var hit_audio = new Audio("/sounds/hit.mp3");
 var fail_audio = new Audio("/sounds/miss.mp3");
@@ -320,7 +322,7 @@ let $ = JQuery;
 
 //SOCKET SETUP
 import io from "socket.io-client";
-const socket = io("http://localhost:3000");
+const socket = io(socket_url);
 const encrypt = require("socket.io-encrypt");
 encrypt("secret")(socket);
 
@@ -345,20 +347,20 @@ export default {
     var room_id = pathname[2];
     var me = null;
     axios
-      .get("http://localhost:8000/api/user/current", {
+      .get(url + "/api/user/current", {
         headers: { "x-access-token": localStorage.token }
       })
       .then(res => {
         me = res.data;
       });
     axios
-      .get("http://localhost:8000/api/room/" + room_id, {
+      .get(url + "/api/room/" + room_id, {
         headers: { "x-access-token": localStorage.token }
       })
       .then(res => {
         this.current_room = res.data;
         if (res.data.type == "private" && res.data.status == "pending") {
-          this.share = "http://localhost:8080/room/join/" + res.data._id;
+          this.share = share_url + "/room/join/" + res.data._id;
         }
         if (res.data.player1 == me._id) {
           this.player1 = true;
@@ -385,7 +387,7 @@ export default {
       if (this.current_room.player2 == null) {
         console.log("here");
         axios.delete(
-          "http://localhost:8000/api/room/" + this.current_room._id,
+          url + "/api/room/" + this.current_room._id,
           {
             headers: {
               "x-access-token": localStorage.token

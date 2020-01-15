@@ -46,6 +46,7 @@
 <script>
 import axios from "axios";
 import Back from "./layout/Back.vue";
+const { url } = require("../helper");
 
 export default {
   name: "Login",
@@ -67,7 +68,7 @@ export default {
     register() {
       const vm = this;
       axios
-        .post("http://localhost:8000/api/register", {
+        .post(url + "/api/register", {
           name: this.register_name,
           email: this.register_email,
           password: this.register_password
@@ -89,7 +90,7 @@ export default {
     login() {
       const vm = this;
       axios
-        .post("http://localhost:8000/api/login", {
+        .post(url + "/api/login", {
           email: this.login_email,
           password: this.login_password
         })

@@ -21,6 +21,7 @@
 <script>
 import axios from "axios";
 import Back from "./layout/Back.vue";
+const { url } = require("../helper");
 
 export default {
   name: "Room",
@@ -38,7 +39,7 @@ export default {
       const vm = this;
       axios
         .post(
-          "http://localhost:8000/api/room ",
+          url + "/api/room ",
           {
             type: "public"
           },
@@ -61,7 +62,7 @@ export default {
       const vm = this;
       axios
         .post(
-          "http://localhost:8000/api/room ",
+          url + "/api/room ",
           {
             type: "private"
           },

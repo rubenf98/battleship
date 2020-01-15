@@ -44,6 +44,7 @@
 <script>
 import axios from "axios";
 import Back from "./layout/Back.vue";
+const { url } = require("../helper");
 
 export default {
   name: "rank",
@@ -60,7 +61,7 @@ export default {
   },
   created: function() {
     axios
-      .get("http://localhost:8000/api/ranking/" + this.$route.params.rank)
+      .get(url + "/api/ranking/" + this.$route.params.rank)
       .then(res => {
         this.players = res.data;
       });

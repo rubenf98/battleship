@@ -30,6 +30,7 @@
 <script>
 import axios from "axios";
 import Back from "./layout/Back.vue";
+const { url } = require("../helper");
 
 export default {
   name: "ranks",
@@ -44,14 +45,14 @@ export default {
   },
   created: function() {
     axios
-      .get("http://localhost:8000/api/room/private", {
+      .get(url + "/api/room/private", {
         headers: { "x-access-token": localStorage.token }
       })
       .then(res => {
         this.rooms = res.data;
       });
     axios
-      .get("http://localhost:8000/api/user/current", {
+      .get(url + "/api/user/current", {
         headers: { "x-access-token": localStorage.token }
       })
       .then(res => {

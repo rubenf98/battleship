@@ -6,6 +6,7 @@
 
 <script>
 import axios from "axios";
+const { url } = require("./helper");
 
 export default {
   name: "app",
@@ -17,7 +18,7 @@ export default {
   mounted() {
     if (localStorage.token) {
       axios
-        .get("http://localhost:8000/api/logged", {
+        .get(url + "/api/logged", {
           headers: {
             "x-access-token": localStorage.token
           }
