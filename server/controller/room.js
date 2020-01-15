@@ -99,7 +99,7 @@ exports.current = async function (req, res, next) {
     Room.find(
         {
             $or: [{ player1: user._id }, { player2: user._id }],
-            $and: [{ status: { $ne: "finished" } }]
+            $and: [{ status: { $ne: "finished" }, player2: { $ne: null } }]
         },
         "player1 player2 type status",
         function (err, rooms) {
