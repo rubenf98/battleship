@@ -448,7 +448,7 @@ function clickPiece() {
   var room_id = pathname[2];
   socket.emit("click-piece", {
     room_id: room_id,
-    piece_id: event.toElement.id,
+    piece_id: event.target.id,
     token: localStorage.token
   });
 }
