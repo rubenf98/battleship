@@ -44,7 +44,7 @@ router.get("/room/history", auth, async (req, res) => {
       $and: [{ status: "finished" }]
     },
     "player1 player2 winner",
-    function(err, rooms) {
+    function (err, rooms) {
       if (!err) {
         if (!rooms)
           return res.status(404).send("you have not finished a game yet");
@@ -65,7 +65,7 @@ router.get("/room/private", auth, async (req, res) => {
       $and: [{ status: "running" }]
     },
     "player1 player2 type status",
-    function(err, rooms) {
+    function (err, rooms) {
       if (!err) {
         if (!rooms) return res.status(404).send("you have no current rooms");
         res.send(rooms);
@@ -147,9 +147,9 @@ router.post("/room", auth, games, async (req, res) => {
     winner: null
   });
 
-  room.save(function(err) {
+  room.save(function (err) {
     if (err) res.send("erro");
-    res.send(room);
+    else res.send(room);
   });
 });
 

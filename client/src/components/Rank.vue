@@ -2,7 +2,7 @@
   <div>
     <Back />
 
-    <div class="rank-container">
+    <div v-if="players" class="rank-container">
       <div class="table-container">
         <h1>Rankings</h1>
         <hr />
