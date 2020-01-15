@@ -29,13 +29,11 @@ const RoomSchema = new mongoose.Schema({
     type: Array,
     minItems: 100,
     maxItems: 100,
-    default: Board1()
   },
   player2Board: {
     type: Array,
     minItems: 100,
     maxItems: 100,
-    default: Board2()
   },
   player1Ready: {
     type: Boolean,
@@ -61,21 +59,17 @@ const RoomSchema = new mongoose.Schema({
 
 const Room = mongoose.model("Room", RoomSchema);
 
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 function Board1() {
-  let x = getRandomInt(0, 9);
-  array1 = initial[x];
-  return array1;
+  let min = Math.ceil(0);
+  let max = Math.floor(9);
+  let random = Math.floor(Math.random() * (max - min + 1)) + min;
+  return initial[random];
 }
 function Board2() {
-  let y = getRandomInt(0, 9);
-  array2 = initial[y];
-  return array2;
+  let min = Math.ceil(0);
+  let max = Math.floor(9);
+  let random = Math.floor(Math.random() * (max - min + 1)) + min;
+  return initial[random];;
 }
 
 function validateRoom(room) {

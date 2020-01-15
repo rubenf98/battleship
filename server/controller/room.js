@@ -1,5 +1,6 @@
 const { Room, validate } = require("../model/Room");
 const { User } = require("../model/User");
+const { initial } = require("../helper");
 
 exports.store = async function (req, res, next) {
     // validate the request body first
@@ -9,11 +10,22 @@ exports.store = async function (req, res, next) {
     const user = await User.findById(req.user._id).select("_id");
     if (!user) return res.status(403).send("you need to login!");
 
+
+    let min = Math.ceil(0);
+    let max = Math.floor(9);
+    let player1Random = Math.floor(Math.random() * (max - min + 1)) + min;
+    let random1Board = initial[player1Random];
+
+    let player2Random = Math.floor(Math.random() * (max - min + 1)) + min;
+    let random2Board = initial[player2Random];
+
     let room = new Room({
         player1: user._id,
         player2: null,
         type: req.body.type,
-        winner: null
+        winner: null,
+        player1Board: random1Board,
+        player2Board: random2Board
     });
 
     room.save(function (err) {
