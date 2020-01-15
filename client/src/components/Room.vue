@@ -627,6 +627,7 @@ function addEventListenerOnChat() {
   });
 }
 
+//
 socket.on("chat-message", data => {
   appendMessage(data.message, "other-message");
 });
