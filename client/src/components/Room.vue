@@ -51,6 +51,7 @@
       <div class="chat-container">
         <div class="messages_form">
           <input
+            autocomplete="off"
             class="chat-message"
             id="message-input"
             type="text"
