@@ -114,7 +114,19 @@ router.get("/room/:room", auth, async (req, res) => {
       (room.player1 == user._id || room.player2 == user._id) &&
       room.status != "finished"
     ) {
-      res.send(room);
+      res.send({
+        _id: room._id,
+        player1: room.player1,
+        player2: room.player2,
+        status: room.status,
+        player1ready: room.player1ready,
+        player2ready: room.player2ready,
+        player1Socket: room.player1Socket,
+        player2Socket: room.player2Socket,
+        turn: room.turn,
+        type: room.type,
+        winner: room.winner
+      });
     } else res.status(400).send("you can't access this room");
   });
 });
@@ -151,7 +163,7 @@ router.delete("/room/:room", auth, async (req, res) => {
 
   if (room.player1 == user._id && room.player2 == null) {
     Room.deleteOne({ _id: room._id }, function(err) {
-      if (err) res.status(200).send("room deleted");
+      if (!err) res.status(200).send("room deleted");
       else res.status(403).send("room can't be deleted");
     });
   }

@@ -55,7 +55,7 @@ const RoomSchema = new mongoose.Schema({
   },
   turn: {
     type: String,
-    default: "null"
+    default: "player1"
   }
 });
 

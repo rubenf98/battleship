@@ -308,14 +308,20 @@
 
 <script>
 import axios from "axios";
-import io from "socket.io-client";
-var socket = io("http://localhost:3000");
 import Back from "./layout/Back.vue";
 var audio = new Audio("/sounds/song.mp3");
 var hit_audio = new Audio("/sounds/hit.mp3");
 var fail_audio = new Audio("/sounds/miss.mp3");
+
+//JQUERY
 import JQuery from "jquery";
 let $ = JQuery;
+
+//SOCKET SETUP
+import io from "socket.io-client";
+const socket = io("http://localhost:3000");
+const encrypt = require("socket.io-encrypt");
+encrypt("secret")(socket);
 
 export default {
   name: "Room",
@@ -371,7 +377,6 @@ export default {
       });
 
     createBoards();
-    //audio.play();
   },
   beforeRouteLeave(to, from, next) {
     if (
@@ -511,6 +516,15 @@ function boardFill(data) {
   }
 }
 
+function playerTurnDisplay(next_player) {
+  let message = document.getElementById("wait-message");
+  if (next_player == "player1") {
+    message.innerHTML = "Player1 turn...";
+  } else if (next_player == "player2") {
+    message.innerHTML = "Player2 turn...";
+  }
+}
+
 // SOCKET IO
 
 // PLAY COMUNICATION
@@ -518,6 +532,8 @@ socket.on("click-response", data => {
   let piece = document.getElementById(`${data.piece_id}`);
   //let enemyPlayer = data.piece_id.split("-");
   //enemyPlayer = enemyPlayer[0];
+
+  console.log("Next player" + nextPlayer);
   if (data.result == "hit") {
     hit_audio.currentTime = 0;
     hit_audio.play();
@@ -529,6 +545,9 @@ socket.on("click-response", data => {
     fail_audio.play();
     piece.classList.add("fail");
     piece.removeEventListener("click", clickPiece, false);
+    var nextPlayer = data.piece_id.split("-");
+    nextPlayer = `player${nextPlayer[0]}`;
+    playerTurnDisplay(nextPlayer);
   }
 });
 
@@ -541,12 +560,14 @@ socket.on("enemy_play", data => {
     piece.style.backgroundColor = "grey";
     piece.removeEventListener("click", clickPiece, false);
   } else {
-    // INDICATE YOUR TURN!!!!!
     fail_audio.currentTime = 0;
     fail_audio.play();
     console.log("fail!!!");
     piece.classList.add("fail");
     piece.removeEventListener("click", clickPiece, false);
+    var nextPlayer = data.piece_id.split("-");
+    nextPlayer = `player${nextPlayer[0]}`;
+    playerTurnDisplay(nextPlayer);
   }
 });
 
@@ -578,7 +599,8 @@ socket.on("both-players-not-ready", () => {
 socket.on("both-ready", data => {
   addEventListenerOnBoard(data.player);
   addEventListenerOnChat();
-
+  audio.volume = 0.1;
+  audio.play();
   $("#message-input").attr("placeholder", "Send a message to your opponent!");
   $("#message-input").removeAttr("disabled");
   $("#chat-btn").attr("src", "/icons/send.svg");

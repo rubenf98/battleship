@@ -2,7 +2,11 @@ const { Room, validate } = require("./model/Room");
 const { User } = require("./model/User");
 const jwt = require("jsonwebtoken");
 const config = require("config");
+
+//SOCKET
 const io = require("socket.io")(3000);
+const encrypt = require("socket.io-encrypt");
+io.use(encrypt("secret"));
 
 // SOCKET IO
 io.on("connection", (socket) => {
@@ -71,7 +75,7 @@ io.on("connection", (socket) => {
     getTarget(data, (target) => {
       //console.log("message: " + data.message)
       io.to(target).emit("chat-message", {
-        message: data.message,
+        message: data.message
       });
     });
   });
@@ -83,8 +87,7 @@ async function getTarget(data, callback) {
   let target;
   if (user._id == room.player1) {
     target = room.player2Socket;
-  }
-  else if (user._id == room.player2) {
+  } else if (user._id == room.player2) {
     target = room.player1Socket;
   }
   callback(target);
@@ -161,7 +164,6 @@ async function playerReady(player_id, room_id, callback) {
   }
   if (room.player1Ready == true && room.player2Ready == true) {
     room.status = "running";
-    room.turn = "player1";
     await room.save();
     callback(1);
   } else {
@@ -264,5 +266,3 @@ async function verifyWinner(data, callback) {
   }
   callback(win_result, identifyEnemyPlayer, socket1, socket2);
 }
-
-
