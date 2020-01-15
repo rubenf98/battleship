@@ -365,7 +365,9 @@ export default {
         console.log("is it me: " + this.player1);
       })
       .catch(e => {
+        console.log("entrou no erro");
         if (e.response) {
+          console.log(e.response.data);
           vm.$router.push({
             name: "menu",
             params: { feedback: e.response.data }
@@ -376,13 +378,9 @@ export default {
     createBoards();
   },
   beforeRouteLeave(to, from, next) {
-    if (
-      confirm(
-        "Do you really want to leave? This may result on you losing the game."
-      )
-    ) {
-      audio.pause();
-      audio.currentTime = 0;
+    audio.pause();
+    audio.currentTime = 0;
+    if (this.current_room) {
       if (this.current_room.player2 == null) {
         console.log("here");
         axios.delete(
@@ -397,10 +395,9 @@ export default {
           }
         );
       }
-      next();
-    } else {
-      next(false);
     }
+
+    next();
   },
   methods: {
     startGame() {
