@@ -2,8 +2,7 @@ const { Room, validate } = require("../model/Room");
 const { User } = require("../model/User");
 
 exports.store = async function (req, res, next) {
-    // Validate request parameters, queries using express-validator
-
+    // validate the request body first
     const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
@@ -49,11 +48,20 @@ exports.show = async function (req, res, next) {
             (room.player1 == user._id || room.player2 == user._id) &&
             room.status != "finished"
         ) {
-            console.log(room);
-            res.status(200).send(room);
-        } else {
-            res.status(400).send("you can't access this room");
-        }
+            res.send({
+                _id: room._id,
+                player1: room.player1,
+                player2: room.player2,
+                status: room.status,
+                player1ready: room.player1ready,
+                player2ready: room.player2ready,
+                player1Socket: room.player1Socket,
+                player2Socket: room.player2Socket,
+                turn: room.turn,
+                type: room.type,
+                winner: room.winner
+            });
+        } else res.status(400).send("you can't access this room");
     });
 }
 
